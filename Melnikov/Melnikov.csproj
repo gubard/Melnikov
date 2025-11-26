@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <TargetFramework>net9.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <Nullable>enable</Nullable>
         <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
         <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,5 +12,12 @@
         <PackageReference Include="Avalonia.Desktop" />
         <PackageReference Include="Avalonia.Themes.Fluent" />
         <PackageReference Include="Avalonia.Fonts.Inter" />
+        <PackageReference Include="Jab" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\Inanna\Inanna.SourceGenerator\Inanna.SourceGenerator.csproj" ReferenceOutputAssembly="false" OutputItemType="Analyzer" />
+      <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
+      <ProjectReference Include="..\..\Manis\Manis.Contract\Manis.Contract.csproj" />
     </ItemGroup>
 </Project>
