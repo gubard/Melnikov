@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using Gaia.Extensions;
+using Gaia.Helpers;
 using Manis.Contract;
 using Manis.Contract.Models;
 using Manis.Contract.Services;

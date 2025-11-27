@@ -1,5 +1,4 @@
 ﻿using Jab;
-using Manis.Contract;
 using Manis.Contract.Services;
 using Melnikov.Models;
 using ManisJsonContext = Manis.Contract.Models.ManisJsonContext;
@@ -12,6 +11,9 @@ public interface IMelnikovServiceProvider
 {
     public static IManisService GetManisService(ManisServiceOptions options)
     {
-        return new ManisService(new HttpClient { BaseAddress = new Uri(options.Url) }, new ManisJsonContext().Options);
+        return new ManisService(new()
+        {
+            BaseAddress = new(options.Url),
+        }, new ManisJsonContext().Options);
     }
 }

@@ -1,8 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gaia.Errors;
-using Gaia.Extensions;
-using Gaia.Helpers;
 using Inanna.Models;
 using Manis.Contract.Services;
 
@@ -17,82 +15,14 @@ public partial class CreateUserViewModel : ViewModelBase
 
     private readonly IManisService _manisService;
 
-    public CreateUserViewModel(object header, IManisService manisService)
+    public CreateUserViewModel(object header, IManisService manisService, IManisValidator manisValidator)
     {
         Header = header;
         _manisService = manisService;
 
-        SetValidation(nameof(Login), () =>
-        {
-            if (Login.IsNullOrWhiteSpace())
-            {
-                return [new PropertyEmptyValidationError(nameof(Login))];
-            }
-
-            if (Login.Length > 255)
-            {
-                return [new PropertyMaxSizeValidationError(nameof(Login), (ulong)Login.Length, 255)];
-            }
-
-            if (Login.Length < 3)
-            {
-                return [new PropertyMinSizeValidationError(nameof(Login), (ulong)Login.Length, 3)];
-            }
-
-            var index = Login.IndexOfAnyExcept(StringHelper.ValidLoginSearch);
-
-            if (index >= 0)
-            {
-                return [new PropertyContainsInvalidValueValidationError<char>(nameof(Login), Login[index], StringHelper.ValidLoginChar.ToCharArray())];
-            }
-
-            return [];
-        });
-
-        SetValidation(nameof(Email), () =>
-        {
-            if (Email.IsNullOrWhiteSpace())
-            {
-                return [new PropertyEmptyValidationError(nameof(Email))];
-            }
-
-            if (!Email.IsEmail())
-            {
-                return [new PropertyInvalidValidationError(nameof(Email))];
-            }
-
-            if (Email.Length > 255)
-            {
-                return [new PropertyMaxSizeValidationError(nameof(Email), (ulong)Email.Length, 255)];
-            }
-
-            if (Email.Length < 5)
-            {
-                return [new PropertyMinSizeValidationError(nameof(Email), (ulong)Email.Length, 5)];
-            }
-
-            return [];
-        });
-
-        SetValidation(nameof(Password), () =>
-        {
-            if (Password.IsNullOrWhiteSpace())
-            {
-                return [new PropertyEmptyValidationError(nameof(Password))];
-            }
-
-            if (Password.Length > 512)
-            {
-                return [new PropertyMaxSizeValidationError(nameof(Password), (ulong)Password.Length, 512)];
-            }
-
-            if (Password.Length < 8)
-            {
-                return [new PropertyMinSizeValidationError(nameof(Password), (ulong)Password.Length, 5)];
-            }
-
-            return [];
-        });
+        SetValidation(nameof(Login), () => manisValidator.Validate(Login, nameof(Login)));
+        SetValidation(nameof(Email), () => manisValidator.Validate(Email, nameof(Email)));
+        SetValidation(nameof(Password), () => manisValidator.Validate(Password, nameof(Password)));
 
         SetValidation(nameof(RepeatPassword), () =>
         {
