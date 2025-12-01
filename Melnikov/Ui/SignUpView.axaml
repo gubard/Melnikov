@@ -25,9 +25,9 @@
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Email}" />
                 <TextBox Text="{Binding Email}" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Password}" />
-                <TextBox Text="{Binding Password}" />
+                <TextBox Classes="password" Text="{Binding Password}" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.RepeatPassword}" />
-                <TextBox Text="{Binding RepeatPassword}" />
+                <TextBox Classes="password" Text="{Binding RepeatPassword}" />
 
                 <StackPanel Classes="horizontal alignment-right">
                     <Button Command="{x:Static h:MelnikovCommands.NavigateToSignInViewCommand}"

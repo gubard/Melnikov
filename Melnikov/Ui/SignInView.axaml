@@ -23,7 +23,7 @@
                 <TextBlock Classes="field" Text="{DynamicResource Lang.LoginOrEmail}" />
                 <TextBox Text="{Binding LoginOrEmail}" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Password}" />
-                <TextBox Text="{Binding Password}" />
+                <TextBox Classes="password" Text="{Binding Password}" />
 
                 <StackPanel Classes="horizontal alignment-right">
                     <Button Command="{x:Static h:MelnikovCommands.NavigateToSignUpViewCommand}" Content="{DynamicResource Lang.SignUp}" />
