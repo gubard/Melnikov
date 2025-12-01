@@ -4,9 +4,10 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Melnikov.Ui"
              xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
+             xmlns:h="clr-namespace:Melnikov.Helpers"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="Melnikov.Ui.CreateUserView"
-             x:DataType="ui:CreateUserViewModel">
+             x:Class="Melnikov.Ui.SignUpView"
+             x:DataType="ui:SignUpViewModel">
     <Border MaxWidth="300"
             Width="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter}, ConverterParameter=0.95}"
             CornerRadius="5"
@@ -15,7 +16,7 @@
             BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <ContentControl Content="{Binding Header}" />
+                <TextBlock Text="{DynamicResource Lang.CreateUser}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>
@@ -29,10 +30,11 @@
                 <TextBox Text="{Binding RepeatPassword}" />
 
                 <StackPanel Classes="horizontal alignment-right">
-                    <Button Command="{Binding CreateUserCommand}" Content="{DynamicResource Lang.CreateUser}" />
+                    <Button Command="{x:Static h:MelnikovCommands.NavigateToSignInViewCommand}"
+                            Content="{DynamicResource Lang.SignIn}" />
+                    <Button Command="{Binding SignUpCommand}" Content="{DynamicResource Lang.SignUp}" />
                 </StackPanel>
             </StackPanel>
         </c:GroupBoxControl>
     </Border>
-
 </UserControl>

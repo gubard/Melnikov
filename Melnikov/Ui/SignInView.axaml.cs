@@ -2,9 +2,9 @@
 
 namespace Melnikov.Ui;
 
-public partial class CreateUserView : UserControl
+public partial class SignInView : UserControl
 {
-    public CreateUserView()
+    public SignInView()
     {
         InitializeComponent();
     }

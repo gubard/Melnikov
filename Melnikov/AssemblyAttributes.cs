@@ -1,4 +1,5 @@
 ﻿using Inanna.Generator;
 using Melnikov.Ui;
 
-[assembly: ViewPair(typeof(CreateUserView), typeof(CreateUserViewModel))]
+[assembly: ViewPair(typeof(SignUpView), typeof(SignUpViewModel))]
+[assembly: ViewPair(typeof(SignInView), typeof(SignInViewModel))]

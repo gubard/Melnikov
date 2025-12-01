@@ -1,12 +1,15 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gaia.Errors;
+using Inanna.Helpers;
 using Inanna.Models;
+using Inanna.Services;
+using Manis.Contract.Models;
 using Manis.Contract.Services;
 
 namespace Melnikov.Ui;
 
-public partial class CreateUserViewModel : ViewModelBase
+public partial class SignUpViewModel : ViewModelBase, INonHeader
 {
     [ObservableProperty] private string _login = string.Empty;
     [ObservableProperty] private string _email = string.Empty;
@@ -15,9 +18,8 @@ public partial class CreateUserViewModel : ViewModelBase
 
     private readonly IManisService _manisService;
 
-    public CreateUserViewModel(object header, IManisService manisService, IManisValidator manisValidator)
+    public SignUpViewModel(IManisService manisService, IManisValidator manisValidator)
     {
-        Header = header;
         _manisService = manisService;
 
         SetValidation(nameof(Login), () => manisValidator.Validate(Login, nameof(Login)));
@@ -35,12 +37,21 @@ public partial class CreateUserViewModel : ViewModelBase
         });
     }
 
-    public object Header { get; }
-
     [RelayCommand]
-    private Task CreateUserAsync(CancellationToken ct)
+    private Task SignUpAsync(CancellationToken ct)
     {
-        return WrapCommand(async () => await _manisService.PostAsync(new()
+        return WrapCommand(async () =>
+        {
+            if (await UiHelper.CheckValidationErrors(_manisService.PostAsync(CreateManisPostRequest(), ct)))
+            {
+                await UiHelper.NavigateToAsync<SignInViewModel>(ct);
+            }
+        });
+    }
+
+    private ManisPostRequest CreateManisPostRequest()
+    {
+        return new()
         {
             CreateUsers =
             [
@@ -51,6 +62,6 @@ public partial class CreateUserViewModel : ViewModelBase
                     Password = Password,
                 },
             ],
-        }, ct));
+        };
     }
 }
