@@ -18,13 +18,13 @@ public partial class SignUpViewModel : ViewModelBase, INonHeader
 
     private readonly IAuthenticationService _authenticationService;
 
-    public SignUpViewModel(IAuthenticationService authenticationService, IManisValidator manisValidator)
+    public SignUpViewModel(IAuthenticationService authenticationService, IAuthenticationValidator authenticationValidator)
     {
         _authenticationService = authenticationService;
 
-        SetValidation(nameof(Login), () => manisValidator.Validate(Login, nameof(Login)));
-        SetValidation(nameof(Email), () => manisValidator.Validate(Email, nameof(Email)));
-        SetValidation(nameof(Password), () => manisValidator.Validate(Password, nameof(Password)));
+        SetValidation(nameof(Login), () => authenticationValidator.Validate(Login, nameof(Login)));
+        SetValidation(nameof(Email), () => authenticationValidator.Validate(Email, nameof(Email)));
+        SetValidation(nameof(Password), () => authenticationValidator.Validate(Password, nameof(Password)));
 
         SetValidation(nameof(RepeatPassword), () =>
         {
