@@ -7,12 +7,12 @@ using Zeus.Helpers;
 
 namespace Melnikov.Services;
 
-public class ManisService : IManisService
+public class AuthenticationService : IAuthenticationService
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonSerializerOptions;
 
-    public ManisService(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions)
+    public AuthenticationService(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions)
     {
         _httpClient = httpClient;
         _jsonSerializerOptions = jsonSerializerOptions;

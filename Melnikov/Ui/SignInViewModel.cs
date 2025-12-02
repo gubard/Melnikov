@@ -13,12 +13,12 @@ public partial class SignInViewModel : ViewModelBase, INonHeader
     [ObservableProperty] private string _loginOrEmail = string.Empty;
     [ObservableProperty] private string _password = string.Empty;
 
-    private readonly IManisService _manisService;
+    private readonly IAuthenticationService _authenticationService;
     private readonly Func<CancellationToken, Task> _successSignInFunc;
 
-    public SignInViewModel(IManisService manisService, Func<CancellationToken, Task> successSignInFunc)
+    public SignInViewModel(IAuthenticationService authenticationService, Func<CancellationToken, Task> successSignInFunc)
     {
-        _manisService = manisService;
+        _authenticationService = authenticationService;
         _successSignInFunc = successSignInFunc;
     }
 
@@ -27,7 +27,7 @@ public partial class SignInViewModel : ViewModelBase, INonHeader
     {
         return WrapCommand(async () =>
         {
-            if (await UiHelper.CheckValidationErrors(_manisService.GetAsync(CreateManisGetResponse(), ct)))
+            if (await UiHelper.CheckValidationErrors(_authenticationService.GetAsync(CreateManisGetResponse(), ct)))
             {
                 await _successSignInFunc.Invoke(ct);
             }

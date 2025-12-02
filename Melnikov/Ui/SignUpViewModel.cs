@@ -16,11 +16,11 @@ public partial class SignUpViewModel : ViewModelBase, INonHeader
     [ObservableProperty] private string _password = string.Empty;
     [ObservableProperty] private string _repeatPassword = string.Empty;
 
-    private readonly IManisService _manisService;
+    private readonly IAuthenticationService _authenticationService;
 
-    public SignUpViewModel(IManisService manisService, IManisValidator manisValidator)
+    public SignUpViewModel(IAuthenticationService authenticationService, IManisValidator manisValidator)
     {
-        _manisService = manisService;
+        _authenticationService = authenticationService;
 
         SetValidation(nameof(Login), () => manisValidator.Validate(Login, nameof(Login)));
         SetValidation(nameof(Email), () => manisValidator.Validate(Email, nameof(Email)));
@@ -42,7 +42,7 @@ public partial class SignUpViewModel : ViewModelBase, INonHeader
     {
         return WrapCommand(async () =>
         {
-            if (await UiHelper.CheckValidationErrors(_manisService.PostAsync(CreateManisPostRequest(), ct)))
+            if (await UiHelper.CheckValidationErrors(_authenticationService.PostAsync(CreateManisPostRequest(), ct)))
             {
                 await UiHelper.NavigateToAsync<SignInViewModel>(ct);
             }

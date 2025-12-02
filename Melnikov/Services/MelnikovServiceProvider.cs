@@ -7,7 +7,7 @@ using ManisJsonContext = Manis.Contract.Models.ManisJsonContext;
 namespace Melnikov.Services;
 
 [ServiceProviderModule]
-[Transient(typeof(IManisService), Factory = nameof(GetManisService))]
+[Transient(typeof(IAuthenticationService), Factory = nameof(GetManisService))]
 [Transient(typeof(JsonSerializerOptions), Factory = nameof(GetJsonSerializerOptions))]
 public interface IMelnikovServiceProvider
 {
@@ -20,9 +20,9 @@ public interface IMelnikovServiceProvider
         };
     }
 
-    public static IManisService GetManisService(ManisServiceOptions options, JsonSerializerOptions jsonOptions)
+    public static IAuthenticationService GetManisService(ManisServiceOptions options, JsonSerializerOptions jsonOptions)
     {
-        return new ManisService(new()
+        return new AuthenticationService(new()
         {
             BaseAddress = new(options.Url),
         }, jsonOptions);
