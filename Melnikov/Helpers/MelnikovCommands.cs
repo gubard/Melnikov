@@ -1,8 +1,6 @@
 ﻿using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Inanna.Helpers;
-using Inanna.Services;
-using Manis.Contract.Services;
 using Melnikov.Ui;
 
 namespace Melnikov.Helpers;
