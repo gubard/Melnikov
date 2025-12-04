@@ -21,18 +21,21 @@
 
             <StackPanel>
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Login}" />
-                <TextBox Text="{Binding Login}" />
+                <TextBox x:Name="LoginTextBox" Text="{Binding Login}" KeyDown="LoginTextBoxOnKeyDown" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Email}" />
-                <TextBox Text="{Binding Email}" />
+                <TextBox x:Name="EmailTextBox" Text="{Binding Email}" KeyDown="EmailTextBoxOnKeyDown" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Password}" />
-                <TextBox Classes="password" Text="{Binding Password}" />
+                <TextBox x:Name="PasswordTextBox" Classes="password" Text="{Binding Password}"
+                         KeyDown="PasswordTextBoxOnKeyDown" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.RepeatPassword}" />
-                <TextBox Classes="password" Text="{Binding RepeatPassword}" />
+                <TextBox x:Name="RepeatPasswordTextBox" Classes="password" Text="{Binding RepeatPassword}"
+                         KeyDown="RepeatPasswordTextBoxOnKeyDown" />
 
                 <StackPanel Classes="horizontal alignment-right">
                     <Button Command="{x:Static h:MelnikovCommands.NavigateToSignInViewCommand}"
                             Content="{DynamicResource Lang.SignIn}" />
-                    <Button Command="{Binding SignUpCommand}" Content="{DynamicResource Lang.SignUp}" />
+                    <Button x:Name="SignUpButton" Command="{Binding SignUpCommand}"
+                            Content="{DynamicResource Lang.SignUp}" />
                 </StackPanel>
             </StackPanel>
         </c:GroupBoxControl>

@@ -1,6 +1,6 @@
 ﻿namespace Melnikov.Models;
 
-public class ManisServiceOptions
+public class AuthenticationServiceOptions
 {
     public string Url { get; set; } = string.Empty;
 }
