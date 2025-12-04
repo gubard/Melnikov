@@ -28,6 +28,8 @@
                          KeyDown="PasswordTextBoxOnKeyDown" />
 
                 <StackPanel Classes="horizontal alignment-right">
+                    <Button Command="{Binding OfflineCommand}"
+                            Content="{DynamicResource Lang.Offline}" />
                     <Button Command="{x:Static h:MelnikovCommands.NavigateToSignUpViewCommand}"
                             Content="{DynamicResource Lang.SignUp}" />
                     <Button x:Name="SignInButton" Command="{Binding SignInCommand}"

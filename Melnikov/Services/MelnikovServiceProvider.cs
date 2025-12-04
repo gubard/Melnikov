@@ -1,4 +1,5 @@
 ﻿using System.Text.Json;
+using Gaia.Services;
 using Jab;
 using Manis.Contract.Services;
 using Melnikov.Models;
@@ -8,9 +9,10 @@ namespace Melnikov.Services;
 
 [ServiceProviderModule]
 [Transient(typeof(IAuthenticationService), Factory = nameof(GetAuthenticationService))]
+[Singleton(typeof(IUiAuthenticationService), typeof(UiAuthenticationService))]
 public interface IMelnikovServiceProvider
 {
-    public static IAuthenticationService GetAuthenticationService(AuthenticationServiceOptions options)
+    public static IAuthenticationService GetAuthenticationService(AuthenticationServiceOptions options, ITryPolicyService tryPolicyService)
     {
         return new AuthenticationService(new()
         {
@@ -19,6 +21,6 @@ public interface IMelnikovServiceProvider
         {
             TypeInfoResolver = ManisJsonContext.Resolver,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        });
+        }, tryPolicyService);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Gaia.Errors;
+using Gaia.Models;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
@@ -38,11 +38,11 @@ public partial class SignUpViewModel : ViewModelBase, INonHeader
     }
 
     [RelayCommand]
-    private Task SignUpAsync(CancellationToken ct)
+    private async Task SignUpAsync(CancellationToken ct)
     {
-        return WrapCommand(async () =>
+        await WrapCommand(async () =>
         {
-            if (await UiHelper.CheckValidationErrors(_authenticationService.PostAsync(CreateManisPostRequest(), ct)))
+            if (await UiHelper.CheckValidationErrorsAsync(_authenticationService.PostAsync(CreateManisPostRequest(), ct)))
             {
                 await UiHelper.NavigateToAsync<SignInViewModel>(ct);
             }

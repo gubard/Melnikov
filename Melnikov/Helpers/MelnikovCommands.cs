@@ -9,8 +9,8 @@ public static class MelnikovCommands
 {
     static MelnikovCommands()
     {
-        NavigateToSignUpViewCommand = new AsyncRelayCommand(UiHelper.NavigateToAsync<SignUpViewModel>);
-        NavigateToSignInViewCommand = new AsyncRelayCommand(UiHelper.NavigateToAsync<SignInViewModel>);
+        NavigateToSignUpViewCommand = UiHelper.CreateCommand(async ct => await UiHelper.NavigateToAsync<SignUpViewModel>(ct));
+        NavigateToSignInViewCommand = UiHelper.CreateCommand(async ct => await UiHelper.NavigateToAsync<SignInViewModel>(ct));
     }
 
     public static readonly ICommand NavigateToSignUpViewCommand;
