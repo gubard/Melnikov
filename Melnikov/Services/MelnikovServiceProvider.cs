@@ -21,6 +21,6 @@ public interface IMelnikovServiceProvider
         {
             TypeInfoResolver = ManisJsonContext.Resolver,
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        }, tryPolicyService);
+        }, tryPolicyService, EmptyHeadersFactory.Instance);
     }
 }
