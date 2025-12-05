@@ -8,15 +8,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Melnikov.Ui.SignInView"
              x:DataType="ui:SignInViewModel">
-    <Border MaxWidth="300"
+    <Border Classes="alignment-vertical-center card"
             Width="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter}, ConverterParameter=0.95}"
-            CornerRadius="5"
-            BorderThickness="2"
-            Classes="alignment-vertical-center"
             BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Text="{DynamicResource Lang.WelcomeToCromwell}" />
+                <TextBlock Classes="alignment-center" Text="{DynamicResource Lang.WelcomeToCromwell}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>
