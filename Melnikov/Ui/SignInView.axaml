@@ -4,7 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Melnikov.Ui"
              xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
-             xmlns:h="clr-namespace:Melnikov.Helpers"
+             xmlns:h="clr-namespace:Inanna.Helpers;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Melnikov.Ui.SignInView"
              x:DataType="ui:SignInViewModel">
@@ -27,7 +27,8 @@
                 <StackPanel Classes="horizontal alignment-right">
                     <Button Command="{Binding OfflineCommand}"
                             Content="{DynamicResource Lang.Offline}" />
-                    <Button Command="{x:Static h:MelnikovCommands.NavigateToSignUpViewCommand}"
+                    <Button Command="{x:Static h:InannaCommands.NavigateToCommand}"
+                            CommandParameter="{x:Type ui:SignUpViewModel}"
                             Content="{DynamicResource Lang.SignUp}" />
                     <Button x:Name="SignInButton" Command="{Binding SignInCommand}"
                             Content="{DynamicResource Lang.SignIn}" />
