@@ -14,7 +14,7 @@ public interface IMelnikovServiceProvider
 {
     public static IAuthenticationService GetAuthenticationService(AuthenticationServiceOptions options, ITryPolicyService tryPolicyService)
     {
-        return new AuthenticationService(new()
+        return new AuthenticationHttpService(new()
         {
             BaseAddress = new(options.Url),
         }, new()
