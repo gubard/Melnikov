@@ -8,6 +8,12 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Melnikov.Ui.SignInView"
              x:DataType="ui:SignInViewModel">
+    <Interaction.Behaviors>
+        <EventTriggerBehavior EventName="Loaded">
+            <InvokeCommandAction Command="{Binding InitializedCommand}" />
+        </EventTriggerBehavior>
+    </Interaction.Behaviors>
+
     <Border Classes="alignment-vertical-center card"
             Width="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter}, ConverterParameter=0.95}"
             BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}">
@@ -23,10 +29,12 @@
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Password}" />
                 <TextBox x:Name="PasswordTextBox" Classes="password" Text="{Binding Password}"
                          KeyDown="PasswordTextBoxOnKeyDown" />
+                <CheckBox IsChecked="{Binding IsRememberMe}" Content="{DynamicResource Lang.RememberMe}" />
 
                 <StackPanel Classes="horizontal alignment-right">
                     <Button Command="{Binding OfflineCommand}"
-                            Content="{DynamicResource Lang.Offline}" />
+                            Content="{DynamicResource Lang.Offline}"
+                            IsEnabled="{Binding IsAvailableOffline}" />
                     <Button Command="{x:Static h:InannaCommands.NavigateToCommand}"
                             CommandParameter="{x:Type ui:SignUpViewModel}"
                             Content="{DynamicResource Lang.SignUp}" />
