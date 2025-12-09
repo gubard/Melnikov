@@ -50,4 +50,9 @@ public class UiAuthenticationService : IUiAuthenticationService
     {
         return _authenticationService.PostAsync(request, ct);
     }
+
+    public ManisPostResponse Post(ManisPostRequest request)
+    {
+        return _authenticationService.Post(request);
+    }
 }
