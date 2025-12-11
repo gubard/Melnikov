@@ -10,7 +10,7 @@ using Melnikov.Services;
 
 namespace Melnikov.Ui;
 
-public partial class SignInViewModel : ViewModelBase, INonHeader
+public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate
 {
     [ObservableProperty] private string _loginOrEmail = string.Empty;
     [ObservableProperty] private string _password = string.Empty;
