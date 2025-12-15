@@ -11,30 +11,52 @@ namespace Melnikov.Ui;
 
 public partial class SignUpViewModel : ViewModelBase, INonHeader, INonNavigate
 {
-    [ObservableProperty] private string _login = string.Empty;
-    [ObservableProperty] private string _email = string.Empty;
-    [ObservableProperty] private string _password = string.Empty;
-    [ObservableProperty] private string _repeatPassword = string.Empty;
+    [ObservableProperty]
+    private string _login = string.Empty;
+
+    [ObservableProperty]
+    private string _email = string.Empty;
+
+    [ObservableProperty]
+    private string _password = string.Empty;
+
+    [ObservableProperty]
+    private string _repeatPassword = string.Empty;
 
     private readonly IAuthenticationService _authenticationService;
 
-    public SignUpViewModel(IAuthenticationService authenticationService, IAuthenticationValidator authenticationValidator)
+    public SignUpViewModel(
+        IAuthenticationService authenticationService,
+        IAuthenticationValidator authenticationValidator
+    )
     {
         _authenticationService = authenticationService;
 
         SetValidation(nameof(Login), () => authenticationValidator.Validate(Login, nameof(Login)));
         SetValidation(nameof(Email), () => authenticationValidator.Validate(Email, nameof(Email)));
-        SetValidation(nameof(Password), () => authenticationValidator.Validate(Password, nameof(Password)));
+        SetValidation(
+            nameof(Password),
+            () => authenticationValidator.Validate(Password, nameof(Password))
+        );
 
-        SetValidation(nameof(RepeatPassword), () =>
-        {
-            if (RepeatPassword != Password)
+        SetValidation(
+            nameof(RepeatPassword),
+            () =>
             {
-                return [new PropertyNotEqualValidationError(nameof(Password), nameof(RepeatPassword))];
-            }
+                if (RepeatPassword != Password)
+                {
+                    return
+                    [
+                        new PropertyNotEqualValidationError(
+                            nameof(Password),
+                            nameof(RepeatPassword)
+                        ),
+                    ];
+                }
 
-            return [];
-        });
+                return [];
+            }
+        );
     }
 
     [RelayCommand]
@@ -42,7 +64,11 @@ public partial class SignUpViewModel : ViewModelBase, INonHeader, INonNavigate
     {
         await WrapCommand(async () =>
         {
-            if (await UiHelper.CheckValidationErrorsAsync(_authenticationService.PostAsync(CreateManisPostRequest(), ct)))
+            if (
+                await UiHelper.CheckValidationErrorsAsync(
+                    _authenticationService.PostAsync(CreateManisPostRequest(), ct)
+                )
+            )
             {
                 await UiHelper.NavigateToAsync<SignInViewModel>(ct);
             }

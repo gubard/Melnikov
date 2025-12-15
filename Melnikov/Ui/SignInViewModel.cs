@@ -12,17 +12,29 @@ namespace Melnikov.Ui;
 
 public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate
 {
-    [ObservableProperty] private string _loginOrEmail = string.Empty;
-    [ObservableProperty] private string _password = string.Empty;
-    [ObservableProperty] private bool _isRememberMe;
-    [ObservableProperty] private bool _isAvailableOffline;
+    [ObservableProperty]
+    private string _loginOrEmail = string.Empty;
+
+    [ObservableProperty]
+    private string _password = string.Empty;
+
+    [ObservableProperty]
+    private bool _isRememberMe;
+
+    [ObservableProperty]
+    private bool _isAvailableOffline;
 
     private readonly IUiAuthenticationService _uiAuthenticationService;
     private readonly ISettingsService<MelnikovSettings> _settingsService;
     private readonly Func<CancellationToken, ValueTask> _successSignInFunc;
     private readonly Func<CancellationToken, ValueTask> _offlineSignInFunc;
 
-    public SignInViewModel(IUiAuthenticationService uiAuthenticationService, Func<CancellationToken, ValueTask> successSignInFunc, Func<CancellationToken, ValueTask> offlineSignInFunc, ISettingsService<MelnikovSettings> settingsService)
+    public SignInViewModel(
+        IUiAuthenticationService uiAuthenticationService,
+        Func<CancellationToken, ValueTask> successSignInFunc,
+        Func<CancellationToken, ValueTask> offlineSignInFunc,
+        ISettingsService<MelnikovSettings> settingsService
+    )
     {
         _uiAuthenticationService = uiAuthenticationService;
         _successSignInFunc = successSignInFunc;
@@ -61,17 +73,14 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate
             {
                 if (IsRememberMe)
                 {
-                    await _settingsService.SaveSettingsAsync(new()
-                    {
-                        Token = response.SignIns[LoginOrEmail].Token,
-                    }, ct);
+                    await _settingsService.SaveSettingsAsync(
+                        new() { Token = response.SignIns[LoginOrEmail].Token },
+                        ct
+                    );
                 }
                 else
                 {
-                    await _settingsService.SaveSettingsAsync(new()
-                    {
-                        Token = string.Empty,
-                    }, ct);
+                    await _settingsService.SaveSettingsAsync(new() { Token = string.Empty }, ct);
                 }
 
                 await _successSignInFunc.Invoke(ct);
@@ -81,14 +90,6 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate
 
     private ManisGetRequest CreateManisGetRequest()
     {
-        return new()
-        {
-            SignIns = new()
-            {
-                {
-                    LoginOrEmail, Password
-                },
-            },
-        };
+        return new() { SignIns = new() { { LoginOrEmail, Password } } };
     }
 }

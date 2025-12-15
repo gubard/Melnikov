@@ -6,4 +6,16 @@ using Manis.Contract.Services;
 
 namespace Melnikov.Services;
 
-public class AuthenticationHttpService(HttpClient httpClient, JsonSerializerOptions jsonSerializerOptions, ITryPolicyService tryPolicyService, IFactory<Memory<HttpHeader>> headersFactory) : HttpService<ManisGetRequest, ManisPostRequest, ManisGetResponse, ManisPostResponse>(httpClient, jsonSerializerOptions, tryPolicyService, headersFactory), IAuthenticationService;
+public class AuthenticationHttpService(
+    HttpClient httpClient,
+    JsonSerializerOptions jsonSerializerOptions,
+    ITryPolicyService tryPolicyService,
+    IFactory<Memory<HttpHeader>> headersFactory
+)
+    : HttpService<ManisGetRequest, ManisPostRequest, ManisGetResponse, ManisPostResponse>(
+        httpClient,
+        jsonSerializerOptions,
+        tryPolicyService,
+        headersFactory
+    ),
+        IAuthenticationService;

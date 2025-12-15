@@ -12,15 +12,20 @@ namespace Melnikov.Services;
 [Singleton(typeof(IUiAuthenticationService), typeof(UiAuthenticationService))]
 public interface IMelnikovServiceProvider
 {
-    public static IAuthenticationService GetAuthenticationService(AuthenticationServiceOptions options, ITryPolicyService tryPolicyService)
+    public static IAuthenticationService GetAuthenticationService(
+        AuthenticationServiceOptions options,
+        ITryPolicyService tryPolicyService
+    )
     {
-        return new AuthenticationHttpService(new()
-        {
-            BaseAddress = new(options.Url),
-        }, new()
-        {
-            TypeInfoResolver = ManisJsonContext.Resolver,
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-        }, tryPolicyService, EmptyHeadersFactory.Instance);
+        return new AuthenticationHttpService(
+            new() { BaseAddress = new(options.Url) },
+            new()
+            {
+                TypeInfoResolver = ManisJsonContext.Resolver,
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            },
+            tryPolicyService,
+            EmptyHeadersFactory.Instance
+        );
     }
 }
