@@ -8,7 +8,7 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Melnikov.Ui.SignUpView"
              x:DataType="ui:SignUpViewModel">
-    <Border Classes="alignment-vertical-center card"
+    <Border Classes="align-vertical-center card"
             Width="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter}, ConverterParameter=0.95}"
             BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}">
         <c:GroupBoxControl>
@@ -28,7 +28,7 @@
                 <TextBox x:Name="RepeatPasswordTextBox" Classes="password" Text="{Binding RepeatPassword}"
                          KeyDown="RepeatPasswordTextBoxOnKeyDown" />
 
-                <StackPanel Classes="horizontal alignment-right">
+                <StackPanel Classes="horizontal align-right">
                     <Button Command="{x:Static helpers:InannaCommands.NavigateToCommand}"
                             CommandParameter="{x:Type ui:SignInViewModel}"
                             Content="{DynamicResource Lang.SignIn}" />

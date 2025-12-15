@@ -14,12 +14,12 @@
         </EventTriggerBehavior>
     </Interaction.Behaviors>
 
-    <Border Classes="alignment-vertical-center card"
+    <Border Classes="align-vertical-center card"
             Width="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter}, ConverterParameter=0.95}"
             BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Classes="alignment-center" Text="{DynamicResource Lang.WelcomeToCromwell}" />
+                <TextBlock Classes="align-center" Text="{DynamicResource Lang.WelcomeToCromwell}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>
@@ -31,7 +31,7 @@
                          KeyDown="PasswordTextBoxOnKeyDown" />
                 <CheckBox IsChecked="{Binding IsRememberMe}" Content="{DynamicResource Lang.RememberMe}" />
 
-                <StackPanel Classes="horizontal alignment-right">
+                <StackPanel Classes="horizontal align-right">
                     <Button Command="{Binding OfflineCommand}"
                             Content="{DynamicResource Lang.Offline}"
                             IsEnabled="{Binding IsAvailableOffline}" />
