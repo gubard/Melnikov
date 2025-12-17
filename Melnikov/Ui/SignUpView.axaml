@@ -22,17 +22,18 @@
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Email}" />
                 <TextBox x:Name="EmailTextBox" Text="{Binding Email}" KeyDown="EmailTextBoxOnKeyDown" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Password}" />
-                <TextBox x:Name="PasswordTextBox" Classes="password" Text="{Binding Password}"
+                <TextBox x:Name="PasswordTextBox" Classes="password" 
+                         Text="{Binding Password}"
                          KeyDown="PasswordTextBoxOnKeyDown" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.RepeatPassword}" />
-                <TextBox x:Name="RepeatPasswordTextBox" Classes="password" Text="{Binding RepeatPassword}"
-                         KeyDown="RepeatPasswordTextBoxOnKeyDown" />
+                <TextBox x:Name="RepeatPasswordTextBox" Classes="password" Text="{Binding RepeatPassword}" />
 
                 <StackPanel Classes="horizontal align-right">
                     <Button Command="{x:Static helpers:InannaCommands.NavigateToCommand}"
                             CommandParameter="{x:Type ui:SignInViewModel}"
                             Content="{DynamicResource Lang.SignIn}" />
                     <Button x:Name="SignUpButton" Command="{Binding SignUpCommand}"
+                            IsDefault="True"
                             Content="{DynamicResource Lang.SignUp}" />
                 </StackPanel>
             </StackPanel>

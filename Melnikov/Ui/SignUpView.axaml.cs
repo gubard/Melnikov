@@ -18,6 +18,7 @@ public partial class SignUpView : UserControl
         }
 
         EmailTextBox.Focus();
+        e.Handled = true;
     }
 
     private void EmailTextBoxOnKeyDown(object? sender, KeyEventArgs e)
@@ -28,6 +29,7 @@ public partial class SignUpView : UserControl
         }
 
         PasswordTextBox.Focus();
+        e.Handled = true;
     }
 
     private void PasswordTextBoxOnKeyDown(object? sender, KeyEventArgs e)
@@ -38,15 +40,6 @@ public partial class SignUpView : UserControl
         }
 
         RepeatPasswordTextBox.Focus();
-    }
-
-    private void RepeatPasswordTextBoxOnKeyDown(object? sender, KeyEventArgs e)
-    {
-        if (e.Key != Key.Enter)
-        {
-            return;
-        }
-
-        SignUpButton.Command?.Execute(SignUpButton.CommandParameter);
+        e.Handled = true;
     }
 }
