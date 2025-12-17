@@ -45,47 +45,56 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate
     [RelayCommand]
     private async Task InitializedAsync(CancellationToken ct)
     {
-        await WrapCommand(async () =>
-        {
-            var settings = await _settingsService.GetSettingsAsync(ct);
-
-            if (!settings.Token.IsNullOrWhiteSpace())
+        await WrapCommandAsync(
+            async () =>
             {
-                IsAvailableOffline = true;
-            }
-        });
+                var settings = await _settingsService.GetSettingsAsync(ct);
+
+                if (!settings.Token.IsNullOrWhiteSpace())
+                {
+                    IsAvailableOffline = true;
+                }
+            },
+            ct
+        );
     }
 
     [RelayCommand]
     private async Task OfflineAsync(CancellationToken ct)
     {
-        await WrapCommand(async () => await _offlineSignInFunc.Invoke(ct));
+        await WrapCommandAsync(() => _offlineSignInFunc.Invoke(ct), ct);
     }
 
     [RelayCommand]
     private async Task SignInAsync(CancellationToken ct)
     {
-        await WrapCommand(async () =>
-        {
-            var response = await _uiAuthenticationService.GetAsync(CreateManisGetRequest(), ct);
-
-            if (await UiHelper.CheckValidationErrorsAsync(response))
+        await WrapCommandAsync(
+            async () =>
             {
-                if (IsRememberMe)
-                {
-                    await _settingsService.SaveSettingsAsync(
-                        new() { Token = response.SignIns[LoginOrEmail].Token },
-                        ct
-                    );
-                }
-                else
-                {
-                    await _settingsService.SaveSettingsAsync(new() { Token = string.Empty }, ct);
-                }
+                var response = await _uiAuthenticationService.GetAsync(CreateManisGetRequest(), ct);
 
-                await _successSignInFunc.Invoke(ct);
-            }
-        });
+                if (await UiHelper.CheckValidationErrorsAsync(response, ct))
+                {
+                    if (IsRememberMe)
+                    {
+                        await _settingsService.SaveSettingsAsync(
+                            new() { Token = response.SignIns[LoginOrEmail].Token },
+                            ct
+                        );
+                    }
+                    else
+                    {
+                        await _settingsService.SaveSettingsAsync(
+                            new() { Token = string.Empty },
+                            ct
+                        );
+                    }
+
+                    await _successSignInFunc.Invoke(ct);
+                }
+            },
+            ct
+        );
     }
 
     private ManisGetRequest CreateManisGetRequest()

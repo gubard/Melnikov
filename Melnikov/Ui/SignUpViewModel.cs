@@ -62,17 +62,21 @@ public partial class SignUpViewModel : ViewModelBase, INonHeader, INonNavigate
     [RelayCommand]
     private async Task SignUpAsync(CancellationToken ct)
     {
-        await WrapCommand(async () =>
-        {
-            if (
-                await UiHelper.CheckValidationErrorsAsync(
-                    _authenticationService.PostAsync(CreateManisPostRequest(), ct)
-                )
-            )
+        await WrapCommandAsync(
+            async () =>
             {
-                await UiHelper.NavigateToAsync<SignInViewModel>(ct);
-            }
-        });
+                if (
+                    await UiHelper.CheckValidationErrorsAsync(
+                        _authenticationService.PostAsync(CreateManisPostRequest(), ct),
+                        ct
+                    )
+                )
+                {
+                    await UiHelper.NavigateToAsync<SignInViewModel>(ct);
+                }
+            },
+            ct
+        );
     }
 
     private ManisPostRequest CreateManisPostRequest()
