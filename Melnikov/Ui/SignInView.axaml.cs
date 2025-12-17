@@ -18,15 +18,6 @@ public partial class SignInView : UserControl
         }
 
         PasswordTextBox.Focus();
-    }
-
-    private void PasswordTextBoxOnKeyDown(object? sender, KeyEventArgs e)
-    {
-        if (e.Key != Key.Enter)
-        {
-            return;
-        }
-
-        SignInButton.Command?.Execute(SignInButton.CommandParameter);
+        e.Handled = true;
     }
 }

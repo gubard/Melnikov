@@ -24,11 +24,11 @@
 
             <StackPanel>
                 <TextBlock Classes="field" Text="{DynamicResource Lang.LoginOrEmail}" />
-                <TextBox x:Name="LoginOrEmailTextBox" Text="{Binding LoginOrEmail}"
+                <TextBox x:Name="LoginOrEmailTextBox"
+                         Text="{Binding LoginOrEmail}"
                          KeyDown="LoginOrEmailTextBoxOnKeyDown" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Password}" />
-                <TextBox x:Name="PasswordTextBox" Classes="password" Text="{Binding Password}"
-                         KeyDown="PasswordTextBoxOnKeyDown" />
+                <TextBox x:Name="PasswordTextBox" Classes="password" Text="{Binding Password}" />
                 <CheckBox IsChecked="{Binding IsRememberMe}" Content="{DynamicResource Lang.RememberMe}" />
 
                 <StackPanel Classes="horizontal align-right">
@@ -38,7 +38,9 @@
                     <Button Command="{x:Static h:InannaCommands.NavigateToCommand}"
                             CommandParameter="{x:Type ui:SignUpViewModel}"
                             Content="{DynamicResource Lang.SignUp}" />
-                    <Button x:Name="SignInButton" Command="{Binding SignInCommand}"
+                    <Button x:Name="SignInButton"
+                            IsDefault="True"
+                            Command="{Binding SignInCommand}"
                             Content="{DynamicResource Lang.SignIn}" />
                 </StackPanel>
             </StackPanel>
