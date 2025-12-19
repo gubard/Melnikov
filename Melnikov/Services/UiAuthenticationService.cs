@@ -10,6 +10,7 @@ public interface IUiAuthenticationService : IAuthenticationService
     event Action<TokenResult> LoggedIn;
     event Action LoggedOut;
     void Logout();
+    void Login(string token);
 }
 
 public class UiAuthenticationService : IUiAuthenticationService
@@ -29,6 +30,12 @@ public class UiAuthenticationService : IUiAuthenticationService
     {
         Token = null;
         LoggedOut?.Invoke();
+    }
+
+    public void Login(string token)
+    {
+        Token = new() { Token = token };
+        LoggedIn?.Invoke(Token);
     }
 
     public async ValueTask<ManisGetResponse> GetAsync(ManisGetRequest request, CancellationToken ct)
