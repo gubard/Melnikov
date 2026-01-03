@@ -32,9 +32,6 @@
                 <CheckBox IsChecked="{Binding IsRememberMe}" Content="{DynamicResource Lang.RememberMe}" />
 
                 <StackPanel Classes="horizontal align-right">
-                    <Button Command="{Binding OfflineCommand}"
-                            Content="{DynamicResource Lang.Offline}"
-                            IsEnabled="{Binding IsAvailableOffline}" />
                     <Button Command="{x:Static h:InannaCommands.NavigateToCommand}"
                             CommandParameter="{x:Type ui:SignUpViewModel}"
                             Content="{DynamicResource Lang.SignUp}" />

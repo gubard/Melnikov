@@ -34,7 +34,9 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate
         IUiAuthenticationService uiAuthenticationService,
         Func<CancellationToken, ValueTask> successSignInFunc,
         Func<CancellationToken, ValueTask> offlineSignInFunc,
-        ISettingsService<MelnikovSettings> settingsService, AppState appState)
+        ISettingsService<MelnikovSettings> settingsService,
+        AppState appState
+    )
     {
         _uiAuthenticationService = uiAuthenticationService;
         _successSignInFunc = successSignInFunc;
@@ -60,18 +62,6 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate
             },
             ct
         );
-    }
-
-    [RelayCommand]
-    private async Task OfflineAsync(CancellationToken ct)
-    {
-        await WrapCommandAsync( async () =>
-        {
-            var settings = await _settingsService.GetSettingsAsync(ct);
-            _uiAuthenticationService.Login(settings.Token);
-            _appState.Mode = AppMode.Offline;
-            await _offlineSignInFunc.Invoke(ct);
-        }, ct);
     }
 
     [RelayCommand]

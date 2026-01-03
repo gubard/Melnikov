@@ -1,6 +1,8 @@
 ﻿using Gaia.Models;
+using Inanna.Services;
 using Manis.Contract.Models;
 using Manis.Contract.Services;
+using Melnikov.Models;
 
 namespace Melnikov.Services;
 
@@ -16,10 +18,15 @@ public interface IUiAuthenticationService : IAuthenticationService
 public class UiAuthenticationService : IUiAuthenticationService
 {
     private readonly IAuthenticationService _authenticationService;
+    private readonly ISettingsService<MelnikovSettings> _settingsService;
 
-    public UiAuthenticationService(IAuthenticationService authenticationService)
+    public UiAuthenticationService(
+        IAuthenticationService authenticationService,
+        ISettingsService<MelnikovSettings> settingsService
+    )
     {
         _authenticationService = authenticationService;
+        _settingsService = settingsService;
     }
 
     public TokenResult? Token { get; private set; }
@@ -29,6 +36,7 @@ public class UiAuthenticationService : IUiAuthenticationService
     public void Logout()
     {
         Token = null;
+        _settingsService.SaveSettings(new() { Token = string.Empty, Id = Guid.Empty });
         LoggedOut?.Invoke();
     }
 
