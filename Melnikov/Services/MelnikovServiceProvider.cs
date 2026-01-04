@@ -18,7 +18,7 @@ public interface IMelnikovServiceProvider
     )
     {
         return new AuthenticationHttpService(
-            new() { BaseAddress = new(options.Url) },
+            new() { BaseAddress = new(options.Url), Timeout = TimeSpan.FromSeconds(10) },
             new()
             {
                 TypeInfoResolver = ManisJsonContext.Resolver,
