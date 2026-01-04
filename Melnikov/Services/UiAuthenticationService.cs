@@ -1,4 +1,5 @@
-﻿using Gaia.Models;
+﻿using System.Runtime.CompilerServices;
+using Gaia.Models;
 using Inanna.Services;
 using Manis.Contract.Models;
 using Manis.Contract.Services;
@@ -46,7 +47,15 @@ public class UiAuthenticationService : IUiAuthenticationService
         LoggedIn?.Invoke(Token);
     }
 
-    public async ValueTask<ManisGetResponse> GetAsync(ManisGetRequest request, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<ManisGetResponse> GetAsync(
+        ManisGetRequest request,
+        CancellationToken ct
+    )
+    {
+        return GetCore(request, ct).ConfigureAwait(false);
+    }
+
+    private async ValueTask<ManisGetResponse> GetCore(ManisGetRequest request, CancellationToken ct)
     {
         var response = await _authenticationService.GetAsync(request, ct);
 
@@ -61,7 +70,10 @@ public class UiAuthenticationService : IUiAuthenticationService
         return response;
     }
 
-    public ValueTask<ManisPostResponse> PostAsync(ManisPostRequest request, CancellationToken ct)
+    public ConfiguredValueTaskAwaitable<ManisPostResponse> PostAsync(
+        ManisPostRequest request,
+        CancellationToken ct
+    )
     {
         return _authenticationService.PostAsync(request, ct);
     }
