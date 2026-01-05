@@ -37,7 +37,7 @@ public class UiAuthenticationService : IUiAuthenticationService
     public void Logout()
     {
         Token = null;
-        _settingsService.SaveSettings(new() { Token = string.Empty, Id = Guid.Empty });
+        _settingsService.SaveSettings(new() { Token = string.Empty });
         LoggedOut?.Invoke();
     }
 
