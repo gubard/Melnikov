@@ -8,6 +8,7 @@ public partial class SignUpView : UserControl
     public SignUpView()
     {
         InitializeComponent();
+        Loaded += (_, _) => LoginTextBox.Focus();
     }
 
     private void LoginTextBoxOnKeyDown(object? sender, KeyEventArgs e)
