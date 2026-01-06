@@ -69,7 +69,7 @@ public partial class SignUpViewModel : ViewModelBase, INonHeader, INonNavigate
     {
         if (
             await UiHelper.CheckValidationErrorsAsync(
-                _authenticationService.PostAsync(CreateManisPostRequest(), ct),
+                _authenticationService.PostAsync(Guid.NewGuid(), CreateManisPostRequest(), ct),
                 ct
             )
         )

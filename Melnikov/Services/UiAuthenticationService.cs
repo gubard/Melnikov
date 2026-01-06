@@ -71,16 +71,17 @@ public class UiAuthenticationService : IUiAuthenticationService
     }
 
     public ConfiguredValueTaskAwaitable<ManisPostResponse> PostAsync(
+        Guid idempotentId,
         ManisPostRequest request,
         CancellationToken ct
     )
     {
-        return _authenticationService.PostAsync(request, ct);
+        return _authenticationService.PostAsync(idempotentId, request, ct);
     }
 
-    public ManisPostResponse Post(ManisPostRequest request)
+    public ManisPostResponse Post(Guid idempotentId, ManisPostRequest request)
     {
-        return _authenticationService.Post(request);
+        return _authenticationService.Post(idempotentId, request);
     }
 
     public ManisGetResponse Get(ManisGetRequest request)
