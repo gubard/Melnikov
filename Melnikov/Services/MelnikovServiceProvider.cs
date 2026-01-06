@@ -14,11 +14,14 @@ public interface IMelnikovServiceProvider
 {
     public static IAuthenticationService GetAuthenticationService(
         AuthenticationServiceOptions options,
-        ITryPolicyService tryPolicyService
+        ITryPolicyService tryPolicyService,
+        HttpClient httpClient
     )
     {
+        httpClient.BaseAddress = new(options.Url);
+
         return new AuthenticationHttpService(
-            new() { BaseAddress = new(options.Url), Timeout = TimeSpan.FromSeconds(10) },
+            httpClient,
             new()
             {
                 TypeInfoResolver = ManisJsonContext.Resolver,
