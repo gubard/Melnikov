@@ -11,8 +11,24 @@ using Melnikov.Services;
 
 namespace Melnikov.Ui;
 
-public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate
+public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, IInitUi
 {
+    public SignInViewModel(
+        IUiAuthenticationService uiAuthenticationService,
+        Func<CancellationToken, ConfiguredValueTaskAwaitable> successSignInFunc,
+        ISettingsService<MelnikovSettings> settingsService
+    )
+    {
+        _uiAuthenticationService = uiAuthenticationService;
+        _successSignInFunc = successSignInFunc;
+        _settingsService = settingsService;
+    }
+
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    {
+        return WrapCommandAsync(() => InitializedCore(ct).ConfigureAwait(false), ct);
+    }
+
     [ObservableProperty]
     private string _loginOrEmail = string.Empty;
 
@@ -28,23 +44,6 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate
     private readonly IUiAuthenticationService _uiAuthenticationService;
     private readonly ISettingsService<MelnikovSettings> _settingsService;
     private readonly Func<CancellationToken, ConfiguredValueTaskAwaitable> _successSignInFunc;
-
-    public SignInViewModel(
-        IUiAuthenticationService uiAuthenticationService,
-        Func<CancellationToken, ConfiguredValueTaskAwaitable> successSignInFunc,
-        ISettingsService<MelnikovSettings> settingsService
-    )
-    {
-        _uiAuthenticationService = uiAuthenticationService;
-        _successSignInFunc = successSignInFunc;
-        _settingsService = settingsService;
-    }
-
-    [RelayCommand]
-    private async Task InitializedAsync(CancellationToken ct)
-    {
-        await WrapCommandAsync(() => InitializedCore(ct).ConfigureAwait(false), ct);
-    }
 
     private async ValueTask InitializedCore(CancellationToken ct)
     {

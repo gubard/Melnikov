@@ -8,12 +8,6 @@
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Melnikov.Ui.SignInView"
              x:DataType="ui:SignInViewModel">
-    <Interaction.Behaviors>
-        <EventTriggerBehavior EventName="Loaded">
-            <InvokeCommandAction Command="{Binding InitializedCommand}" />
-        </EventTriggerBehavior>
-    </Interaction.Behaviors>
-
     <Border Classes="align-vertical-center card"
             Width="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter}, ConverterParameter=0.95}"
             BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}">
