@@ -1,7 +1,9 @@
 ﻿using System.Runtime.CompilerServices;
+using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gaia.Helpers;
+using Gaia.Services;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
@@ -11,22 +13,31 @@ using Melnikov.Services;
 
 namespace Melnikov.Ui;
 
-public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, IInitUi
+public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, IInitUi, ISaveUi
 {
     public SignInViewModel(
         IUiAuthenticationService uiAuthenticationService,
         Func<CancellationToken, ConfiguredValueTaskAwaitable> successSignInFunc,
-        ISettingsService<MelnikovSettings> settingsService
+        IObjectStorage objectStorage
     )
     {
         _uiAuthenticationService = uiAuthenticationService;
         _successSignInFunc = successSignInFunc;
-        _settingsService = settingsService;
+        _objectStorage = objectStorage;
     }
 
-    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
-        return WrapCommandAsync(() => InitializedCore(ct).ConfigureAwait(false), ct);
+        return WrapCommandAsync(() => InitUiCore(ct).ConfigureAwait(false), ct);
+    }
+
+    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
+    {
+        return _objectStorage.SaveAsync(
+            $"{typeof(SignInViewModel).FullName}",
+            new SignInSettings { LoginOrEmail = LoginOrEmail },
+            ct
+        );
     }
 
     [ObservableProperty]
@@ -38,21 +49,35 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
     [ObservableProperty]
     private bool _isRememberMe;
 
-    [ObservableProperty]
-    private bool _isAvailableOffline;
-
     private readonly IUiAuthenticationService _uiAuthenticationService;
-    private readonly ISettingsService<MelnikovSettings> _settingsService;
+    private readonly IObjectStorage _objectStorage;
     private readonly Func<CancellationToken, ConfiguredValueTaskAwaitable> _successSignInFunc;
 
-    private async ValueTask InitializedCore(CancellationToken ct)
+    private async ValueTask InitUiCore(CancellationToken ct)
     {
-        var settings = await _settingsService.GetSettingsAsync(ct);
+        var signInSettings = await _objectStorage.LoadAsync<SignInSettings>(
+            $"{typeof(SignInViewModel).FullName}",
+            ct
+        );
 
-        if (!settings.Token.IsNullOrWhiteSpace())
+        if (signInSettings is not null)
         {
-            IsAvailableOffline = true;
-            _uiAuthenticationService.Login(settings.Token);
+            Dispatcher.UIThread.Post(() => LoginOrEmail = signInSettings.LoginOrEmail);
+        }
+
+        var authenticationSettings = await _objectStorage.LoadAsync<AuthenticationSettings>(
+            $"{typeof(AuthenticationSettings).FullName}",
+            ct
+        );
+
+        if (authenticationSettings is null)
+        {
+            return;
+        }
+
+        if (!authenticationSettings.Token.IsNullOrWhiteSpace())
+        {
+            _uiAuthenticationService.Login(authenticationSettings.Token);
             await _successSignInFunc.Invoke(ct);
         }
     }
@@ -71,14 +96,19 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
         {
             if (IsRememberMe)
             {
-                await _settingsService.SaveSettingsAsync(
-                    new() { Token = response.SignIns[LoginOrEmail].Token },
+                await _objectStorage.SaveAsync(
+                    $"{typeof(AuthenticationSettings).FullName}",
+                    new AuthenticationSettings { Token = response.SignIns[LoginOrEmail].Token },
                     ct
                 );
             }
             else
             {
-                await _settingsService.SaveSettingsAsync(new() { Token = string.Empty }, ct);
+                await _objectStorage.SaveAsync(
+                    $"{typeof(AuthenticationSettings).FullName}",
+                    new AuthenticationSettings { Token = string.Empty },
+                    ct
+                );
             }
 
             await _successSignInFunc.Invoke(ct);
