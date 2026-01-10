@@ -11,6 +11,7 @@ namespace Melnikov.Services;
 [ServiceProviderModule]
 [Transient(typeof(IAuthenticationService), Factory = nameof(GetAuthenticationService))]
 [Singleton(typeof(IUiAuthenticationService), typeof(UiAuthenticationService))]
+[Transient(typeof(IMelnikovViewModelFactory), typeof(MelnikovViewModelFactory))]
 public interface IMelnikovServiceProvider
 {
     public static IAuthenticationService GetAuthenticationService(
