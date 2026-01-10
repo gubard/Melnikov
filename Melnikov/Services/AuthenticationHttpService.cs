@@ -8,13 +8,13 @@ namespace Melnikov.Services;
 
 public class AuthenticationHttpService(
     HttpClient httpClient,
-    JsonSerializerOptions jsonSerializerOptions,
+    JsonSerializerOptions options,
     ITryPolicyService tryPolicyService,
     IFactory<Memory<HttpHeader>> headersFactory
 )
     : HttpService<ManisGetRequest, ManisPostRequest, ManisGetResponse, ManisPostResponse>(
         httpClient,
-        jsonSerializerOptions,
+        options,
         tryPolicyService,
         headersFactory
     ),
