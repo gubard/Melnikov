@@ -83,24 +83,4 @@ public class UiAuthenticationService : IUiAuthenticationService
     {
         return _authenticationService.PostAsync(idempotentId, request, ct);
     }
-
-    public ManisPostResponse Post(Guid idempotentId, ManisPostRequest request)
-    {
-        return _authenticationService.Post(idempotentId, request);
-    }
-
-    public ManisGetResponse Get(ManisGetRequest request)
-    {
-        var response = _authenticationService.Get(request);
-
-        if (response.SignIns.Count == 0)
-        {
-            return response;
-        }
-
-        Token = response.SignIns.First().Value;
-        LoggedIn?.Invoke(Token);
-
-        return response;
-    }
 }
