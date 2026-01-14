@@ -6,7 +6,7 @@ using Manis.Contract.Services;
 
 namespace Melnikov.Services;
 
-public class AuthenticationHttpService(
+public sealed class AuthenticationHttpService(
     HttpClient httpClient,
     JsonSerializerOptions options,
     ITryPolicyService tryPolicyService,
@@ -18,4 +18,10 @@ public class AuthenticationHttpService(
         tryPolicyService,
         headersFactory
     ),
-        IAuthenticationService;
+        IAuthenticationService
+{
+    protected override ManisGetRequest CreateHealthCheckGetRequest()
+    {
+        return new();
+    }
+}
