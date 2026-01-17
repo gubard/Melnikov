@@ -31,7 +31,7 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
         return WrapCommandAsync(() => InitUiCore(ct).ConfigureAwait(false), ct);
     }
 
-    public ConfiguredValueTaskAwaitable SaveAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
         return _objectStorage.SaveAsync(
             $"{typeof(SignInViewModel).FullName}",
