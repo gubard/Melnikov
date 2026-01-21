@@ -18,12 +18,14 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
     public SignInViewModel(
         IUiAuthenticationService uiAuthenticationService,
         Func<CancellationToken, ConfiguredValueTaskAwaitable> successSignInFunc,
-        IObjectStorage objectStorage
+        IObjectStorage objectStorage,
+        AppState appState
     )
     {
         _uiAuthenticationService = uiAuthenticationService;
         _successSignInFunc = successSignInFunc;
         _objectStorage = objectStorage;
+        _appState = appState;
     }
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
@@ -52,6 +54,7 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
     private readonly IUiAuthenticationService _uiAuthenticationService;
     private readonly IObjectStorage _objectStorage;
     private readonly Func<CancellationToken, ConfiguredValueTaskAwaitable> _successSignInFunc;
+    private readonly AppState _appState;
 
     private async ValueTask InitUiCore(CancellationToken ct)
     {
@@ -94,6 +97,8 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
         if (await UiHelper.CheckValidationErrorsAsync(response, ct))
         {
+            _appState.ResetServiceModes();
+
             if (IsRememberMe)
             {
                 await _objectStorage.SaveAsync(
