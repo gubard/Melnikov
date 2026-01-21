@@ -7,13 +7,25 @@ using Melnikov.Models;
 
 namespace Melnikov.Services;
 
-public interface IUiAuthenticationService : IAuthenticationService
+public interface IUiAuthenticationService
 {
     TokenResult? Token { get; }
     event Action<TokenResult> LoggedIn;
     event Action LoggedOut;
     ConfiguredValueTaskAwaitable LogoutAsync(CancellationToken ct);
     void Login(string token);
+
+    ConfiguredValueTaskAwaitable<ManisGetResponse> GetAsync(
+        ManisGetRequest request,
+        bool isSaveToken,
+        CancellationToken ct
+    );
+
+    ConfiguredValueTaskAwaitable<ManisPostResponse> PostAsync(
+        Guid idempotentId,
+        ManisPostRequest request,
+        CancellationToken ct
+    );
 }
 
 public class UiAuthenticationService : IUiAuthenticationService
@@ -44,10 +56,11 @@ public class UiAuthenticationService : IUiAuthenticationService
 
     public ConfiguredValueTaskAwaitable<ManisGetResponse> GetAsync(
         ManisGetRequest request,
+        bool isSaveToken,
         CancellationToken ct
     )
     {
-        return GetCore(request, ct).ConfigureAwait(false);
+        return GetCore(request, isSaveToken, ct).ConfigureAwait(false);
     }
 
     public ConfiguredValueTaskAwaitable<ManisPostResponse> PostAsync(
@@ -75,7 +88,11 @@ public class UiAuthenticationService : IUiAuthenticationService
         LoggedOut?.Invoke();
     }
 
-    private async ValueTask<ManisGetResponse> GetCore(ManisGetRequest request, CancellationToken ct)
+    private async ValueTask<ManisGetResponse> GetCore(
+        ManisGetRequest request,
+        bool isSaveToken,
+        CancellationToken ct
+    )
     {
         var response = await _authenticationService.GetAsync(request, ct);
 
@@ -85,6 +102,27 @@ public class UiAuthenticationService : IUiAuthenticationService
         }
 
         Token = response.SignIns.First().Value;
+
+        if (isSaveToken)
+        {
+            await _objectStorage.SaveAsync(
+                $"{typeof(AuthenticationSettings).FullName}",
+                new AuthenticationSettings
+                {
+                    Token = response.SignIns[request.SignIns.Keys.First()].Token,
+                },
+                ct
+            );
+        }
+        else
+        {
+            await _objectStorage.SaveAsync(
+                $"{typeof(AuthenticationSettings).FullName}",
+                new AuthenticationSettings { Token = string.Empty },
+                ct
+            );
+        }
+
         LoggedIn?.Invoke(Token);
 
         return response;

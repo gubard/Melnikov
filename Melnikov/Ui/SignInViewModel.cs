@@ -85,29 +85,15 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
     private async ValueTask SignInCore(CancellationToken ct)
     {
-        var response = await _uiAuthenticationService.GetAsync(CreateManisGetRequest(), ct);
+        var response = await _uiAuthenticationService.GetAsync(
+            CreateManisGetRequest(),
+            IsRememberMe,
+            ct
+        );
 
         if (await UiHelper.CheckValidationErrorsAsync(response, ct))
         {
             _appState.ResetServiceModes();
-
-            if (IsRememberMe)
-            {
-                await _objectStorage.SaveAsync(
-                    $"{typeof(AuthenticationSettings).FullName}",
-                    new AuthenticationSettings { Token = response.SignIns[LoginOrEmail].Token },
-                    ct
-                );
-            }
-            else
-            {
-                await _objectStorage.SaveAsync(
-                    $"{typeof(AuthenticationSettings).FullName}",
-                    new AuthenticationSettings { Token = string.Empty },
-                    ct
-                );
-            }
-
             await _successSignInFunc.Invoke(ct);
         }
     }
