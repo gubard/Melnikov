@@ -63,20 +63,12 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
             ct
         );
 
-        if (signInSettings is not null)
-        {
-            Dispatcher.UIThread.Post(() => LoginOrEmail = signInSettings.LoginOrEmail);
-        }
+        Dispatcher.UIThread.Post(() => LoginOrEmail = signInSettings.LoginOrEmail);
 
         var authenticationSettings = await _objectStorage.LoadAsync<AuthenticationSettings>(
             $"{typeof(AuthenticationSettings).FullName}",
             ct
         );
-
-        if (authenticationSettings is null)
-        {
-            return;
-        }
 
         if (!authenticationSettings.Token.IsNullOrWhiteSpace())
         {
