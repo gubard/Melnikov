@@ -12,15 +12,12 @@ public interface IUiAuthenticationService : IAuthenticationService
     TokenResult? Token { get; }
     event Action<TokenResult> LoggedIn;
     event Action LoggedOut;
-    void Logout();
+    ConfiguredValueTaskAwaitable LogoutAsync(CancellationToken ct);
     void Login(string token);
 }
 
 public class UiAuthenticationService : IUiAuthenticationService
 {
-    private readonly IAuthenticationService _authenticationService;
-    private readonly IObjectStorage _objectStorage;
-
     public UiAuthenticationService(
         IAuthenticationService authenticationService,
         IObjectStorage objectStorage
@@ -34,16 +31,9 @@ public class UiAuthenticationService : IUiAuthenticationService
     public event Action<TokenResult>? LoggedIn;
     public event Action? LoggedOut;
 
-    public void Logout()
+    public ConfiguredValueTaskAwaitable LogoutAsync(CancellationToken ct)
     {
-        Token = null;
-
-        _objectStorage.Save(
-            $"{typeof(AuthenticationSettings).FullName}",
-            new AuthenticationSettings() { Token = string.Empty }
-        );
-
-        LoggedOut?.Invoke();
+        return LogoutCore(ct).ConfigureAwait(false);
     }
 
     public void Login(string token)
@@ -60,6 +50,31 @@ public class UiAuthenticationService : IUiAuthenticationService
         return GetCore(request, ct).ConfigureAwait(false);
     }
 
+    public ConfiguredValueTaskAwaitable<ManisPostResponse> PostAsync(
+        Guid idempotentId,
+        ManisPostRequest request,
+        CancellationToken ct
+    )
+    {
+        return _authenticationService.PostAsync(idempotentId, request, ct);
+    }
+
+    private readonly IAuthenticationService _authenticationService;
+    private readonly IObjectStorage _objectStorage;
+
+    private async ValueTask LogoutCore(CancellationToken ct)
+    {
+        Token = null;
+
+        await _objectStorage.SaveAsync(
+            $"{typeof(AuthenticationSettings).FullName}",
+            new AuthenticationSettings { Token = string.Empty },
+            ct
+        );
+
+        LoggedOut?.Invoke();
+    }
+
     private async ValueTask<ManisGetResponse> GetCore(ManisGetRequest request, CancellationToken ct)
     {
         var response = await _authenticationService.GetAsync(request, ct);
@@ -73,14 +88,5 @@ public class UiAuthenticationService : IUiAuthenticationService
         LoggedIn?.Invoke(Token);
 
         return response;
-    }
-
-    public ConfiguredValueTaskAwaitable<ManisPostResponse> PostAsync(
-        Guid idempotentId,
-        ManisPostRequest request,
-        CancellationToken ct
-    )
-    {
-        return _authenticationService.PostAsync(idempotentId, request, ct);
     }
 }
