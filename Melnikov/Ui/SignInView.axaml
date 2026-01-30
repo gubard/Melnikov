@@ -13,26 +13,26 @@
             BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
-                <TextBlock Classes="align-center" Text="{DynamicResource Lang.WelcomeToSprava}" />
+                <TextBlock Classes="align-center" Text="{StaticResource Lang.WelcomeToSprava}" />
             </c:GroupBoxControl.Header>
 
             <StackPanel>
-                <TextBlock Classes="field" Text="{DynamicResource Lang.LoginOrEmail}" />
+                <TextBlock Classes="field" Text="{StaticResource Lang.LoginOrEmail}" />
                 <TextBox x:Name="LoginOrEmailTextBox"
                          Text="{Binding LoginOrEmail}"
                          KeyDown="LoginOrEmailTextBoxOnKeyDown" />
-                <TextBlock Classes="field" Text="{DynamicResource Lang.Password}" />
+                <TextBlock Classes="field" Text="{StaticResource Lang.Password}" />
                 <TextBox x:Name="PasswordTextBox" Classes="password" Text="{Binding Password}" />
-                <CheckBox IsChecked="{Binding IsRememberMe}" Content="{DynamicResource Lang.RememberMe}" />
+                <CheckBox IsChecked="{Binding IsRememberMe}" Content="{StaticResource Lang.RememberMe}" />
 
                 <StackPanel Classes="horizontal align-right">
                     <Button Command="{x:Static h:InannaCommands.NavigateToCommand}"
                             CommandParameter="{x:Type ui:SignUpViewModel}"
-                            Content="{DynamicResource Lang.SignUp}" />
+                            Content="{StaticResource Lang.SignUp}" />
                     <Button x:Name="SignInButton"
                             IsDefault="True"
                             Command="{Binding SignInCommand}"
-                            Content="{DynamicResource Lang.SignIn}" />
+                            Content="{StaticResource Lang.SignIn}" />
                 </StackPanel>
             </StackPanel>
         </c:GroupBoxControl>
