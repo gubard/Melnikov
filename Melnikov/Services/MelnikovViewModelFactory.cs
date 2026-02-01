@@ -15,12 +15,12 @@ public interface IMelnikovViewModelFactory
 public class MelnikovViewModelFactory : IMelnikovViewModelFactory
 {
     public MelnikovViewModelFactory(
-        IUiAuthenticationService uiAuthenticationService,
+        IAuthenticationUiService authenticationUiService,
         IObjectStorage objectStorage,
         AppState appState
     )
     {
-        _uiAuthenticationService = uiAuthenticationService;
+        _authenticationUiService = authenticationUiService;
         _objectStorage = objectStorage;
         _appState = appState;
     }
@@ -29,10 +29,10 @@ public class MelnikovViewModelFactory : IMelnikovViewModelFactory
         Func<CancellationToken, ConfiguredValueTaskAwaitable> successSignInFunc
     )
     {
-        return new(_uiAuthenticationService, successSignInFunc, _objectStorage, _appState);
+        return new(_authenticationUiService, successSignInFunc, _objectStorage, _appState);
     }
 
-    private readonly IUiAuthenticationService _uiAuthenticationService;
+    private readonly IAuthenticationUiService _authenticationUiService;
     private readonly IObjectStorage _objectStorage;
     private readonly AppState _appState;
 }

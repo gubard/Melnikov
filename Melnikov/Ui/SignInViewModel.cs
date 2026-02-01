@@ -16,13 +16,13 @@ namespace Melnikov.Ui;
 public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, IInitUi, ISaveUi
 {
     public SignInViewModel(
-        IUiAuthenticationService uiAuthenticationService,
+        IAuthenticationUiService authenticationUiService,
         Func<CancellationToken, ConfiguredValueTaskAwaitable> successSignInFunc,
         IObjectStorage objectStorage,
         AppState appState
     )
     {
-        _uiAuthenticationService = uiAuthenticationService;
+        _authenticationUiService = authenticationUiService;
         _successSignInFunc = successSignInFunc;
         _objectStorage = objectStorage;
         _appState = appState;
@@ -51,7 +51,7 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
     [ObservableProperty]
     private bool _isRememberMe;
 
-    private readonly IUiAuthenticationService _uiAuthenticationService;
+    private readonly IAuthenticationUiService _authenticationUiService;
     private readonly IObjectStorage _objectStorage;
     private readonly Func<CancellationToken, ConfiguredValueTaskAwaitable> _successSignInFunc;
     private readonly AppState _appState;
@@ -72,7 +72,7 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
         if (!authenticationSettings.Token.IsNullOrWhiteSpace())
         {
-            _uiAuthenticationService.Login(authenticationSettings.Token);
+            _authenticationUiService.Login(authenticationSettings.Token);
             await _successSignInFunc.Invoke(ct);
         }
     }
@@ -85,7 +85,7 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
     private async ValueTask SignInCore(CancellationToken ct)
     {
-        var response = await _uiAuthenticationService.GetAsync(
+        var response = await _authenticationUiService.GetAsync(
             CreateManisGetRequest(),
             IsRememberMe,
             ct

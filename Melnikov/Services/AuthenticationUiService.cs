@@ -7,7 +7,7 @@ using Melnikov.Models;
 
 namespace Melnikov.Services;
 
-public interface IUiAuthenticationService
+public interface IAuthenticationUiService
 {
     TokenResult? Token { get; }
     event Action<TokenResult> LoggedIn;
@@ -28,9 +28,9 @@ public interface IUiAuthenticationService
     );
 }
 
-public class UiAuthenticationService : IUiAuthenticationService
+public class AuthenticationUiService : IAuthenticationUiService
 {
-    public UiAuthenticationService(
+    public AuthenticationUiService(
         IAuthenticationService authenticationService,
         IObjectStorage objectStorage
     )
