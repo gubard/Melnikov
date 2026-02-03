@@ -1,5 +1,6 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Input;
+using Inanna.Helpers;
 
 namespace Melnikov.Ui;
 
@@ -8,7 +9,7 @@ public partial class SignUpView : UserControl
     public SignUpView()
     {
         InitializeComponent();
-        Loaded += (_, _) => LoginTextBox.Focus();
+        Loaded += (_, _) => LoginTextBox.FocusCaretIndex();
     }
 
     private void LoginTextBoxOnKeyDown(object? sender, KeyEventArgs e)
@@ -18,7 +19,7 @@ public partial class SignUpView : UserControl
             return;
         }
 
-        EmailTextBox.Focus();
+        EmailTextBox.FocusCaretIndex();
         e.Handled = true;
     }
 
@@ -29,7 +30,7 @@ public partial class SignUpView : UserControl
             return;
         }
 
-        PasswordTextBox.Focus();
+        PasswordTextBox.FocusCaretIndex();
         e.Handled = true;
     }
 
@@ -40,7 +41,7 @@ public partial class SignUpView : UserControl
             return;
         }
 
-        RepeatPasswordTextBox.Focus();
+        RepeatPasswordTextBox.FocusCaretIndex();
         e.Handled = true;
     }
 }
