@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
+using Gaia.Helpers;
 using Gaia.Services;
-using Inanna.Models;
 using Jab;
 using Manis.Contract.Services;
 using Melnikov.Models;
@@ -16,8 +16,7 @@ public interface IMelnikovServiceProvider
 {
     public static IAuthenticationService GetAuthenticationService(
         AuthenticationServiceOptions options,
-        HttpClient httpClient,
-        AppState appState
+        HttpClient httpClient
     )
     {
         httpClient.BaseAddress = new(options.Url);
@@ -29,11 +28,7 @@ public interface IMelnikovServiceProvider
                 TypeInfoResolver = ManisJsonContext.Resolver,
                 PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
             },
-            new TryPolicyService(
-                3,
-                TimeSpan.FromSeconds(1),
-                _ => appState.SetServiceMode(nameof(AuthenticationHttpService), ServiceMode.Offline)
-            ),
+            new TryPolicyService(3, TimeSpan.FromSeconds(1), FuncHelper<Exception>.Empty),
             EmptyHeadersFactory.Instance
         );
     }
