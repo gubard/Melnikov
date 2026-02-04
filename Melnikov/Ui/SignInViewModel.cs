@@ -35,11 +35,7 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
-        return _objectStorage.SaveAsync(
-            $"{typeof(SignInViewModel).FullName}",
-            new SignInSettings { LoginOrEmail = LoginOrEmail },
-            ct
-        );
+        return _objectStorage.SaveAsync(new SignInSettings { LoginOrEmail = LoginOrEmail }, ct);
     }
 
     [ObservableProperty]
@@ -58,17 +54,9 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
     private async ValueTask InitUiCore(CancellationToken ct)
     {
-        var signInSettings = await _objectStorage.LoadAsync<SignInSettings>(
-            $"{typeof(SignInViewModel).FullName}",
-            ct
-        );
-
+        var signInSettings = await _objectStorage.LoadAsync<SignInSettings>(ct);
         Dispatcher.UIThread.Post(() => LoginOrEmail = signInSettings.LoginOrEmail);
-
-        var authenticationSettings = await _objectStorage.LoadAsync<AuthenticationSettings>(
-            $"{typeof(AuthenticationSettings).FullName}",
-            ct
-        );
+        var authenticationSettings = await _objectStorage.LoadAsync<AuthenticationSettings>(ct);
 
         if (!authenticationSettings.Token.IsNullOrWhiteSpace())
         {

@@ -1,11 +1,13 @@
-﻿namespace Melnikov.Models;
+﻿using Gaia.Services;
 
-public class SignInSettings
+namespace Melnikov.Models;
+
+public class SignInSettings : ObjectStorageValue<SignInSettings>
 {
     public string LoginOrEmail { get; set; } = string.Empty;
 }
 
-public sealed class AuthenticationSettings
+public sealed class AuthenticationSettings : ObjectStorageValue<AuthenticationSettings>
 {
     public string Token { get; set; } = string.Empty;
 }

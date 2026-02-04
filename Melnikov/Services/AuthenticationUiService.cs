@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using Gaia.Helpers;
 using Gaia.Models;
 using Gaia.Services;
 using Manis.Contract.Models;
@@ -79,11 +80,7 @@ public class AuthenticationUiService : IAuthenticationUiService
     {
         Token = null;
 
-        await _objectStorage.SaveAsync(
-            $"{typeof(AuthenticationSettings).FullName}",
-            new AuthenticationSettings { Token = string.Empty },
-            ct
-        );
+        await _objectStorage.SaveAsync(new AuthenticationSettings { Token = string.Empty }, ct);
 
         LoggedOut?.Invoke();
     }
@@ -106,7 +103,6 @@ public class AuthenticationUiService : IAuthenticationUiService
         if (isSaveToken)
         {
             await _objectStorage.SaveAsync(
-                $"{typeof(AuthenticationSettings).FullName}",
                 new AuthenticationSettings
                 {
                     Token = response.SignIns[request.SignIns.Keys.First()].Token,
@@ -116,11 +112,7 @@ public class AuthenticationUiService : IAuthenticationUiService
         }
         else
         {
-            await _objectStorage.SaveAsync(
-                $"{typeof(AuthenticationSettings).FullName}",
-                new AuthenticationSettings { Token = string.Empty },
-                ct
-            );
+            await _objectStorage.SaveAsync(new AuthenticationSettings { Token = string.Empty }, ct);
         }
 
         LoggedIn?.Invoke(Token);
