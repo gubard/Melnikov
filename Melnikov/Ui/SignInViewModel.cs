@@ -35,7 +35,10 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
     {
-        return _objectStorage.SaveAsync(new SignInSettings { LoginOrEmail = LoginOrEmail }, ct);
+        return _objectStorage.SaveAsync(
+            new SignInSettings { LoginOrEmail = LoginOrEmail.Trim() },
+            ct
+        );
     }
 
     [ObservableProperty]
@@ -88,6 +91,6 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
     private ManisGetRequest CreateManisGetRequest()
     {
-        return new() { SignIns = new() { { LoginOrEmail, Password } } };
+        return new() { SignIns = new() { { LoginOrEmail.Trim(), Password } } };
     }
 }

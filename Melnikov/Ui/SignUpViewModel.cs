@@ -86,8 +86,8 @@ public partial class SignUpViewModel : ViewModelBase, INonHeader, INonNavigate
             [
                 new()
                 {
-                    Email = Email,
-                    Login = Login,
+                    Email = Email.Trim(),
+                    Login = Login.Trim(),
                     Password = Password,
                 },
             ],
