@@ -99,28 +99,23 @@ public class AuthenticationUiService : IAuthenticationUiService
     {
         var response = await _authenticationService.GetAsync(request, ct);
 
-        if (response.SignIns.Count == 0)
+        if (response.ValidationErrors.Count != 0)
         {
             return response;
         }
 
         Token = response.SignIns.First().Value;
-        UpdateUser();
 
         if (isSaveToken)
         {
-            await _objectStorage.SaveAsync(
-                new AuthenticationSettings
-                {
-                    Token = response.SignIns[request.SignIns.Keys.First()].Token,
-                },
-                ct
-            );
+            await _objectStorage.SaveAsync(new AuthenticationSettings { Token = Token.Token }, ct);
         }
         else
         {
             await _objectStorage.SaveAsync(new AuthenticationSettings { Token = string.Empty }, ct);
         }
+
+        UpdateUser();
 
         return response;
     }
