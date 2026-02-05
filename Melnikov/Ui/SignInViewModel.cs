@@ -30,7 +30,23 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
     {
-        return WrapCommandAsync(() => InitUiCore(ct).ConfigureAwait(false), ct);
+        return WrapCommandAsync(
+            async () =>
+            {
+                var signInSettings = await _objectStorage.LoadAsync<SignInSettings>(ct);
+                Dispatcher.UIThread.Post(() => LoginOrEmail = signInSettings.LoginOrEmail);
+                var authenticationSettings = await _objectStorage.LoadAsync<AuthenticationSettings>(
+                    ct
+                );
+
+                if (!authenticationSettings.Token.IsNullOrWhiteSpace())
+                {
+                    await _authenticationUiService.LoginAsync(authenticationSettings.Token, ct);
+                    await _successSignInFunc.Invoke(ct);
+                }
+            },
+            ct
+        );
     }
 
     public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
@@ -54,19 +70,6 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
     private readonly IObjectStorage _objectStorage;
     private readonly Func<CancellationToken, ConfiguredValueTaskAwaitable> _successSignInFunc;
     private readonly AppState _appState;
-
-    private async ValueTask InitUiCore(CancellationToken ct)
-    {
-        var signInSettings = await _objectStorage.LoadAsync<SignInSettings>(ct);
-        Dispatcher.UIThread.Post(() => LoginOrEmail = signInSettings.LoginOrEmail);
-        var authenticationSettings = await _objectStorage.LoadAsync<AuthenticationSettings>(ct);
-
-        if (!authenticationSettings.Token.IsNullOrWhiteSpace())
-        {
-            await _authenticationUiService.LoginAsync(authenticationSettings.Token, ct);
-            await _successSignInFunc.Invoke(ct);
-        }
-    }
 
     [RelayCommand]
     private async Task SignInAsync(CancellationToken ct)
