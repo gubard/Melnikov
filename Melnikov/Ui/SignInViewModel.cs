@@ -63,7 +63,7 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
 
         if (!authenticationSettings.Token.IsNullOrWhiteSpace())
         {
-            _authenticationUiService.Login(authenticationSettings.Token);
+            await _authenticationUiService.LoginAsync(authenticationSettings.Token, ct);
             await _successSignInFunc.Invoke(ct);
         }
     }

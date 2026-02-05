@@ -1,7 +1,10 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Runtime.CompilerServices;
+using Avalonia.Threading;
 using Gaia.Helpers;
 using Gaia.Models;
 using Gaia.Services;
+using Inanna.Models;
 using Manis.Contract.Models;
 using Manis.Contract.Services;
 using Melnikov.Models;
@@ -11,10 +14,8 @@ namespace Melnikov.Services;
 public interface IAuthenticationUiService
 {
     TokenResult? Token { get; }
-    event Action<TokenResult> LoggedIn;
-    event Action LoggedOut;
     ConfiguredValueTaskAwaitable LogoutAsync(CancellationToken ct);
-    void Login(string token);
+    ConfiguredValueTaskAwaitable LoginAsync(string token, CancellationToken ct);
 
     ConfiguredValueTaskAwaitable<ManisGetResponse> GetAsync(
         ManisGetRequest request,
@@ -33,26 +34,31 @@ public class AuthenticationUiService : IAuthenticationUiService
 {
     public AuthenticationUiService(
         IAuthenticationService authenticationService,
-        IObjectStorage objectStorage
+        IObjectStorage objectStorage,
+        AppState appState,
+        JwtSecurityTokenHandler jwtSecurityTokenHandler
     )
     {
         _authenticationService = authenticationService;
         _objectStorage = objectStorage;
+        _appState = appState;
+        _jwtSecurityTokenHandler = jwtSecurityTokenHandler;
     }
 
     public TokenResult? Token { get; private set; }
-    public event Action<TokenResult>? LoggedIn;
-    public event Action? LoggedOut;
 
     public ConfiguredValueTaskAwaitable LogoutAsync(CancellationToken ct)
     {
         return LogoutCore(ct).ConfigureAwait(false);
     }
 
-    public void Login(string token)
+    public ConfiguredValueTaskAwaitable LoginAsync(string token, CancellationToken ct)
     {
         Token = new() { Token = token };
-        LoggedIn?.Invoke(Token);
+        UpdateUser();
+        ct.ThrowIfCancellationRequested();
+
+        return TaskHelper.ConfiguredCompletedTask;
     }
 
     public ConfiguredValueTaskAwaitable<ManisGetResponse> GetAsync(
@@ -75,14 +81,14 @@ public class AuthenticationUiService : IAuthenticationUiService
 
     private readonly IAuthenticationService _authenticationService;
     private readonly IObjectStorage _objectStorage;
+    private readonly AppState _appState;
+    private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler;
 
     private async ValueTask LogoutCore(CancellationToken ct)
     {
         Token = null;
-
+        UpdateUser();
         await _objectStorage.SaveAsync(new AuthenticationSettings { Token = string.Empty }, ct);
-
-        LoggedOut?.Invoke();
     }
 
     private async ValueTask<ManisGetResponse> GetCore(
@@ -99,6 +105,7 @@ public class AuthenticationUiService : IAuthenticationUiService
         }
 
         Token = response.SignIns.First().Value;
+        UpdateUser();
 
         if (isSaveToken)
         {
@@ -115,8 +122,32 @@ public class AuthenticationUiService : IAuthenticationUiService
             await _objectStorage.SaveAsync(new AuthenticationSettings { Token = string.Empty }, ct);
         }
 
-        LoggedIn?.Invoke(Token);
-
         return response;
+    }
+
+    private void UpdateUser()
+    {
+        if (Token == null)
+        {
+            Dispatcher.UIThread.Invoke(() => _appState.User = null);
+        }
+        else
+        {
+            if (!_jwtSecurityTokenHandler.CanReadToken(Token.Token))
+            {
+                throw new("Invalid token");
+            }
+
+            var jwtSecurityToken = _jwtSecurityTokenHandler.ReadJwtToken(Token.Token);
+
+            Dispatcher.UIThread.Invoke(() =>
+                _appState.User = new()
+                {
+                    Id = Guid.Parse(jwtSecurityToken.Claims.GetNameIdentifierClaim().Value),
+                    Login = jwtSecurityToken.Claims.GetNameClaim().Value,
+                    Email = jwtSecurityToken.Claims.GetEmailClaim().Value,
+                }
+            );
+        }
     }
 }
