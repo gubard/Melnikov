@@ -88,12 +88,14 @@ public class AuthenticationUiService : IAuthenticationUiService
     {
         Token = null;
         UpdateUser();
-        await _objectStorage.SaveAsync(new AuthenticationSettings { Token = string.Empty }, ct);
+        var settings = await _objectStorage.LoadAsync<AuthenticationSettings>(ct);
+        settings.Token = string.Empty;
+        await _objectStorage.SaveAsync(settings, ct);
     }
 
     private async ValueTask<ManisGetResponse> GetCore(
         ManisGetRequest request,
-        bool isSaveToken,
+        bool isRememberMe,
         CancellationToken ct
     )
     {
@@ -104,15 +106,32 @@ public class AuthenticationUiService : IAuthenticationUiService
             return response;
         }
 
-        Token = response.SignIns.First().Value;
+        var signIn = response.SignIns.First();
+        Token = signIn.Value;
 
-        if (isSaveToken)
+        if (isRememberMe)
         {
-            await _objectStorage.SaveAsync(new AuthenticationSettings { Token = Token.Token }, ct);
+            await _objectStorage.SaveAsync(
+                new AuthenticationSettings
+                {
+                    Token = Token.Token,
+                    LoginOrEmail = signIn.Key,
+                    IsRememberMe = isRememberMe,
+                },
+                ct
+            );
         }
         else
         {
-            await _objectStorage.SaveAsync(new AuthenticationSettings { Token = string.Empty }, ct);
+            await _objectStorage.SaveAsync(
+                new AuthenticationSettings
+                {
+                    Token = string.Empty,
+                    LoginOrEmail = signIn.Key,
+                    IsRememberMe = isRememberMe,
+                },
+                ct
+            );
         }
 
         UpdateUser();

@@ -13,7 +13,7 @@ using Melnikov.Services;
 
 namespace Melnikov.Ui;
 
-public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, IInitUi, ISaveUi
+public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, IInitUi
 {
     public SignInViewModel(
         IAuthenticationUiService authenticationUiService,
@@ -33,26 +33,20 @@ public partial class SignInViewModel : ViewModelBase, INonHeader, INonNavigate, 
         return WrapCommandAsync(
             async () =>
             {
-                var signInSettings = await _objectStorage.LoadAsync<SignInSettings>(ct);
-                Dispatcher.UIThread.Post(() => LoginOrEmail = signInSettings.LoginOrEmail);
-                var authenticationSettings = await _objectStorage.LoadAsync<AuthenticationSettings>(
-                    ct
-                );
+                var settings = await _objectStorage.LoadAsync<AuthenticationSettings>(ct);
 
-                if (!authenticationSettings.Token.IsNullOrWhiteSpace())
+                Dispatcher.UIThread.Invoke(() =>
                 {
-                    await _authenticationUiService.LoginAsync(authenticationSettings.Token, ct);
+                    LoginOrEmail = settings.LoginOrEmail;
+                    IsRememberMe = settings.IsRememberMe;
+                });
+
+                if (!settings.Token.IsNullOrWhiteSpace())
+                {
+                    await _authenticationUiService.LoginAsync(settings.Token, ct);
                     await _successSignInFunc.Invoke(ct);
                 }
             },
-            ct
-        );
-    }
-
-    public ConfiguredValueTaskAwaitable SaveUiAsync(CancellationToken ct)
-    {
-        return _objectStorage.SaveAsync(
-            new SignInSettings { LoginOrEmail = LoginOrEmail.Trim() },
             ct
         );
     }
