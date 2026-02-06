@@ -5,11 +5,12 @@
              xmlns:ui="clr-namespace:Melnikov.Ui"
              xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
              xmlns:helpers="clr-namespace:Inanna.Helpers;assembly=Inanna"
+             xmlns:s="clr-namespace:Inanna.Services;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Melnikov.Ui.SignUpView"
              x:DataType="ui:SignUpViewModel">
     <Border Classes="align-vertical-center card"
-            Width="{Binding $parent[TopLevel].Width, Converter={StaticResource DoubleToPercentsConverter}, ConverterParameter=0.95}"
+            Width="{Binding $parent[TopLevel].Width, Converter={x:Static s:DoubleToPercentsConverter.Instance}, ConverterParameter=0.95}"
             BorderBrush="{DynamicResource ExpanderHeaderBorderBrush}">
         <c:GroupBoxControl>
             <c:GroupBoxControl.Header>
