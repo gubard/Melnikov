@@ -25,13 +25,15 @@ public partial class SignInViewModel
         IAuthenticationUiService authenticationUiService,
         Func<CancellationToken, ConfiguredValueTaskAwaitable> successSignInFunc,
         IObjectStorage objectStorage,
-        AppState appState
+        AppState appState,
+        IServiceController serviceController
     )
     {
         _authenticationUiService = authenticationUiService;
         _successSignInFunc = successSignInFunc;
         _objectStorage = objectStorage;
         _appState = appState;
+        _serviceController = serviceController;
     }
 
     public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
@@ -58,9 +60,21 @@ public partial class SignInViewModel
 
     public ConfiguredValueTaskAwaitable LoadUiAsync(CancellationToken ct)
     {
-        return _appState.User is not null
-            ? _successSignInFunc.Invoke(ct)
-            : TaskHelper.ConfiguredCompletedTask;
+        return WrapCommandAsync(
+            async () =>
+            {
+                if (_appState.User is null)
+                {
+                    return new DefaultValidationErrors();
+                }
+
+                var errors = await _serviceController.RefreshServicesAsync(ct);
+                await _successSignInFunc.Invoke(ct);
+
+                return errors;
+            },
+            ct
+        );
     }
 
     [ObservableProperty]
@@ -76,6 +90,7 @@ public partial class SignInViewModel
     private readonly IObjectStorage _objectStorage;
     private readonly Func<CancellationToken, ConfiguredValueTaskAwaitable> _successSignInFunc;
     private readonly AppState _appState;
+    private readonly IServiceController _serviceController;
 
     [RelayCommand]
     private async Task SignInAsync(CancellationToken ct)
@@ -83,7 +98,7 @@ public partial class SignInViewModel
         await WrapCommandAsync(() => SignInCore(ct).ConfigureAwait(false), ct);
     }
 
-    private async ValueTask SignInCore(CancellationToken ct)
+    private async ValueTask<IValidationErrors> SignInCore(CancellationToken ct)
     {
         var response = await _authenticationUiService.GetAsync(
             CreateManisGetRequest(),
@@ -91,11 +106,16 @@ public partial class SignInViewModel
             ct
         );
 
-        if (await UiHelper.CheckValidationErrorsAsync(response, ct))
+        if (response.ValidationErrors.Count != 0)
         {
-            _appState.ResetServiceModes();
-            await _successSignInFunc.Invoke(ct);
+            return response;
         }
+
+        _appState.ResetServiceModes();
+        var errors = await _serviceController.RefreshServicesAsync(ct);
+        await _successSignInFunc.Invoke(ct);
+
+        return errors;
     }
 
     private ManisGetRequest CreateManisGetRequest()
