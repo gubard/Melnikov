@@ -18,7 +18,8 @@ public partial class SignInViewModel
         INonHeader,
         INonNavigate,
         IInitUi,
-        INonStatusBar
+        INonStatusBar,
+        ILoadUi
 {
     public SignInViewModel(
         IAuthenticationUiService authenticationUiService,
@@ -49,11 +50,17 @@ public partial class SignInViewModel
                 if (!settings.Token.IsNullOrWhiteSpace())
                 {
                     await _authenticationUiService.LoginAsync(settings.Token, ct);
-                    await _successSignInFunc.Invoke(ct);
                 }
             },
             ct
         );
+    }
+
+    public ConfiguredValueTaskAwaitable LoadUiAsync(CancellationToken ct)
+    {
+        return _appState.User is not null
+            ? _successSignInFunc.Invoke(ct)
+            : TaskHelper.ConfiguredCompletedTask;
     }
 
     [ObservableProperty]
