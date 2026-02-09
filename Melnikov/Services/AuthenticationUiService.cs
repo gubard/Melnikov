@@ -16,6 +16,7 @@ public interface IAuthenticationUiService
     TokenResult? Token { get; }
     ConfiguredValueTaskAwaitable LogoutAsync(CancellationToken ct);
     ConfiguredValueTaskAwaitable LoginAsync(string token, CancellationToken ct);
+    ConfiguredValueTaskAwaitable InvokeGlobalAsync(Func<ConfiguredValueTaskAwaitable> action);
 
     ConfiguredValueTaskAwaitable<ManisGetResponse> GetAsync(
         ManisGetRequest request,
@@ -30,7 +31,7 @@ public interface IAuthenticationUiService
     );
 }
 
-public class AuthenticationUiService : IAuthenticationUiService
+public sealed class AuthenticationUiService : IAuthenticationUiService
 {
     public AuthenticationUiService(
         IAuthenticationService authenticationService,
@@ -56,9 +57,13 @@ public class AuthenticationUiService : IAuthenticationUiService
     {
         Token = new() { Token = token };
         UpdateUser();
-        ct.ThrowIfCancellationRequested();
 
         return TaskHelper.ConfiguredCompletedTask;
+    }
+
+    public ConfiguredValueTaskAwaitable InvokeGlobalAsync(Func<ConfiguredValueTaskAwaitable> action)
+    {
+        return InvokeGlobalCore(action).ConfigureAwait(false);
     }
 
     public ConfiguredValueTaskAwaitable<ManisGetResponse> GetAsync(
@@ -84,13 +89,20 @@ public class AuthenticationUiService : IAuthenticationUiService
     private readonly AppState _appState;
     private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler;
 
+    private async ValueTask InvokeGlobalCore(Func<ConfiguredValueTaskAwaitable> action)
+    {
+        _appState.User = null;
+        await action.Invoke();
+        UpdateUser();
+    }
+
     private async ValueTask LogoutCore(CancellationToken ct)
     {
         Token = null;
         UpdateUser();
-        var settings = await _objectStorage.LoadAsync<AuthenticationSettings>(ct);
-        settings.Token = string.Empty;
-        await _objectStorage.SaveAsync(settings, ct);
+        var authenticationSettings = await _objectStorage.LoadAsync<AuthenticationSettings>(ct);
+        authenticationSettings.Token = string.Empty;
+        await _objectStorage.SaveAsync(authenticationSettings, ct);
     }
 
     private async ValueTask<ManisGetResponse> GetCore(

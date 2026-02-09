@@ -15,26 +15,26 @@
         <c:BusyAreaControl IsBusy="{Binding IsBusy}">
             <c:GroupBoxControl>
                 <c:GroupBoxControl.Header>
-                    <TextBlock Classes="align-center" Text="{StaticResource Lang.WelcomeToSprava}" />
+                    <TextBlock Classes="align-center" Text="{DynamicResource Lang.WelcomeToSprava}" />
                 </c:GroupBoxControl.Header>
 
                 <StackPanel>
-                    <TextBlock Classes="field" Text="{StaticResource Lang.LoginOrEmail}" />
+                    <TextBlock Classes="field" Text="{DynamicResource Lang.LoginOrEmail}" />
                     <TextBox x:Name="LoginOrEmailTextBox"
                              Text="{Binding LoginOrEmail}"
                              KeyDown="LoginOrEmailTextBoxOnKeyDown" />
-                    <TextBlock Classes="field" Text="{StaticResource Lang.Password}" />
+                    <TextBlock Classes="field" Text="{DynamicResource Lang.Password}" />
                     <TextBox x:Name="PasswordTextBox" Classes="password" Text="{Binding Password}" />
-                    <CheckBox IsChecked="{Binding IsRememberMe}" Content="{StaticResource Lang.RememberMe}" />
+                    <CheckBox IsChecked="{Binding IsRememberMe}" Content="{DynamicResource Lang.RememberMe}" />
 
                     <StackPanel Classes="horizontal align-right">
                         <Button Command="{x:Static h:InannaCommands.NavigateToCommand}"
                                 CommandParameter="{x:Type ui:SignUpViewModel}"
-                                Content="{StaticResource Lang.SignUp}" />
+                                Content="{DynamicResource Lang.SignUp}" />
                         <Button x:Name="SignInButton"
                                 IsDefault="True"
                                 Command="{Binding SignInCommand}"
-                                Content="{StaticResource Lang.SignIn}" />
+                                Content="{DynamicResource Lang.SignIn}" />
                     </StackPanel>
                 </StackPanel>
             </c:GroupBoxControl>
