@@ -40,6 +40,7 @@ public partial class SignInViewModel
         return WrapCommandAsync(
             async () =>
             {
+                Dispatcher.UIThread.Post(() => IsBusy = true);
                 var settings = await _objectStorage.LoadAsync<AuthenticationSettings>(ct);
 
                 Dispatcher.UIThread.Invoke(() =>
@@ -62,15 +63,22 @@ public partial class SignInViewModel
         return WrapCommandAsync(
             async () =>
             {
-                if (_appState.User is null)
+                try
                 {
-                    return new DefaultValidationErrors();
+                    if (_appState.User is null)
+                    {
+                        return new DefaultValidationErrors();
+                    }
+
+                    var errors = await _serviceController.RefreshServicesAsync(ct);
+                    await _successSignInFunc.Invoke(ct);
+
+                    return errors;
                 }
-
-                var errors = await _serviceController.RefreshServicesAsync(ct);
-                await _successSignInFunc.Invoke(ct);
-
-                return errors;
+                finally
+                {
+                    Dispatcher.UIThread.Post(() => IsBusy = false);
+                }
             },
             ct
         );
@@ -84,6 +92,9 @@ public partial class SignInViewModel
 
     [ObservableProperty]
     private bool _isRememberMe;
+
+    [ObservableProperty]
+    private bool _isBusy;
 
     private readonly IAuthenticationUiService _authenticationUiService;
     private readonly IObjectStorage _objectStorage;
@@ -99,22 +110,31 @@ public partial class SignInViewModel
 
     private async ValueTask<IValidationErrors> SignInCore(CancellationToken ct)
     {
-        var response = await _authenticationUiService.GetAsync(
-            CreateManisGetRequest(),
-            IsRememberMe,
-            ct
-        );
+        Dispatcher.UIThread.Post(() => IsBusy = true);
 
-        if (response.ValidationErrors.Count != 0)
+        try
         {
-            return response;
+            var response = await _authenticationUiService.GetAsync(
+                CreateManisGetRequest(),
+                IsRememberMe,
+                ct
+            );
+
+            if (response.ValidationErrors.Count != 0)
+            {
+                return response;
+            }
+
+            _appState.ResetServiceModes();
+            var errors = await _serviceController.RefreshServicesAsync(ct);
+            await _successSignInFunc.Invoke(ct);
+
+            return errors;
         }
-
-        _appState.ResetServiceModes();
-        var errors = await _serviceController.RefreshServicesAsync(ct);
-        await _successSignInFunc.Invoke(ct);
-
-        return errors;
+        finally
+        {
+            IsBusy = false;
+        }
     }
 
     private ManisGetRequest CreateManisGetRequest()
