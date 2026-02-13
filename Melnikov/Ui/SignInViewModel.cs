@@ -12,7 +12,7 @@ using Melnikov.Services;
 
 namespace Melnikov.Ui;
 
-public partial class SignInViewModel
+public sealed partial class SignInViewModel
     : ViewModelBase,
         INonHeader,
         INonNavigate,

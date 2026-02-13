@@ -9,7 +9,7 @@ using Manis.Contract.Services;
 
 namespace Melnikov.Ui;
 
-public partial class SignUpViewModel : ViewModelBase, INonHeader, INonNavigate, INonStatusBar
+public sealed partial class SignUpViewModel : ViewModelBase, INonHeader, INonNavigate, INonStatusBar
 {
     [ObservableProperty]
     private string _login = string.Empty;

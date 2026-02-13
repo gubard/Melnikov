@@ -4,7 +4,7 @@ using Inanna.Helpers;
 
 namespace Melnikov.Ui;
 
-public partial class SignUpView : UserControl
+public sealed partial class SignUpView : UserControl
 {
     public SignUpView()
     {
