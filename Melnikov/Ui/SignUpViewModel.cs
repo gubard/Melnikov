@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Gaia.Models;
+using Gaia.Services;
 using Inanna.Helpers;
 using Inanna.Models;
 using Inanna.Services;
@@ -34,6 +35,7 @@ public sealed partial class SignUpViewModel : ViewModelBase, INonHeader, INonNav
 
         SetValidation(nameof(Login), () => authenticationValidator.Validate(Login, nameof(Login)));
         SetValidation(nameof(Email), () => authenticationValidator.Validate(Email, nameof(Email)));
+
         SetValidation(
             nameof(Password),
             () => authenticationValidator.Validate(Password, nameof(Password))
@@ -65,17 +67,22 @@ public sealed partial class SignUpViewModel : ViewModelBase, INonHeader, INonNav
         await WrapCommandAsync(() => SignUpCore(ct).ConfigureAwait(false), ct);
     }
 
-    private async ValueTask SignUpCore(CancellationToken ct)
+    private async ValueTask<IValidationErrors> SignUpCore(CancellationToken ct)
     {
-        if (
-            await UiHelper.CheckValidationErrorsAsync(
-                _authenticationService.PostAsync(Guid.NewGuid(), CreateManisPostRequest(), ct),
-                ct
-            )
-        )
+        var response = await _authenticationService.PostAsync(
+            Guid.NewGuid(),
+            CreateManisPostRequest(),
+            ct
+        );
+
+        if (response.ValidationErrors.Count != 0)
         {
-            await UiHelper.NavigateToAsync<SignInViewModel>(ct);
+            return response;
         }
+
+        await UiHelper.NavigateToAsync<SignInViewModel>(ct);
+
+        return response;
     }
 
     private ManisPostRequest CreateManisPostRequest()
