@@ -91,7 +91,7 @@ public sealed class AuthenticationUiService : IAuthenticationUiService
 
     private async ValueTask InvokeGlobalCore(Func<ConfiguredValueTaskAwaitable> action)
     {
-        _appState.User = null;
+        await Dispatcher.UIThread.InvokeAsync(() => _appState.User = null);
         await action.Invoke();
         UpdateUser();
     }
