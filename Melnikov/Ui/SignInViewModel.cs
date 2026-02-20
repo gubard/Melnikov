@@ -16,7 +16,7 @@ public sealed partial class SignInViewModel
     : ViewModelBase,
         INonHeader,
         INonNavigate,
-        IInitUi,
+        IInit,
         INonStatusBar,
         ILoadUi
 {
@@ -35,7 +35,7 @@ public sealed partial class SignInViewModel
         _serviceController = serviceController;
     }
 
-    public ConfiguredValueTaskAwaitable InitUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {
         return WrapCommandAsync(
             async () =>
