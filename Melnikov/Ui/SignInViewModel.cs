@@ -18,7 +18,7 @@ public sealed partial class SignInViewModel
         INonNavigate,
         IInit,
         INonStatusBar,
-        ILoadUi
+        ILoad
 {
     public SignInViewModel(
         IAuthenticationUiService authenticationUiService,
@@ -58,7 +58,7 @@ public sealed partial class SignInViewModel
         );
     }
 
-    public ConfiguredValueTaskAwaitable LoadUiAsync(CancellationToken ct)
+    public ConfiguredValueTaskAwaitable LoadAsync(CancellationToken ct)
     {
         return WrapCommandAsync(
             async () =>
