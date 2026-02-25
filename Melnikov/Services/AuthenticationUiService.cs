@@ -7,7 +7,9 @@ using Gaia.Services;
 using Inanna.Models;
 using Manis.Contract.Models;
 using Manis.Contract.Services;
+using Melnikov.Helpers;
 using Melnikov.Models;
+using Microsoft.Extensions.Logging;
 
 namespace Melnikov.Services;
 
@@ -37,13 +39,15 @@ public sealed class AuthenticationUiService : IAuthenticationUiService
         IAuthenticationService authenticationService,
         IObjectStorage objectStorage,
         AppState appState,
-        JwtSecurityTokenHandler jwtSecurityTokenHandler
+        JwtSecurityTokenHandler jwtSecurityTokenHandler,
+        ILogger logger
     )
     {
         _authenticationService = authenticationService;
         _objectStorage = objectStorage;
         _appState = appState;
         _jwtSecurityTokenHandler = jwtSecurityTokenHandler;
+        _logger = logger;
     }
 
     public TokenResult? Token { get; private set; }
@@ -88,6 +92,7 @@ public sealed class AuthenticationUiService : IAuthenticationUiService
     private readonly IObjectStorage _objectStorage;
     private readonly AppState _appState;
     private readonly JwtSecurityTokenHandler _jwtSecurityTokenHandler;
+    private readonly ILogger _logger;
 
     private async ValueTask InvokeGlobalCore(Func<ConfiguredValueTaskAwaitable> action)
     {
@@ -155,6 +160,7 @@ public sealed class AuthenticationUiService : IAuthenticationUiService
     {
         if (Token == null)
         {
+            _logger.Logout();
             Dispatcher.UIThread.Invoke(() => _appState.User = null);
         }
         else
@@ -165,11 +171,13 @@ public sealed class AuthenticationUiService : IAuthenticationUiService
             }
 
             var jwtSecurityToken = _jwtSecurityTokenHandler.ReadJwtToken(Token.Token);
+            var id = Guid.Parse(jwtSecurityToken.Claims.GetNameIdentifierClaim().Value);
+            _logger.Login(id);
 
             Dispatcher.UIThread.Invoke(() =>
                 _appState.User = new()
                 {
-                    Id = Guid.Parse(jwtSecurityToken.Claims.GetNameIdentifierClaim().Value),
+                    Id = id,
                     Login = jwtSecurityToken.Claims.GetNameClaim().Value,
                     Email = jwtSecurityToken.Claims.GetEmailClaim().Value,
                 }
