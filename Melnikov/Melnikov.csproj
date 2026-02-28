@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.12" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\Inanna\Inanna\Inanna.csproj" />
     <ProjectReference Include="..\..\Manis\Manis.Contract\Manis.Contract.csproj" />
   </ItemGroup>
