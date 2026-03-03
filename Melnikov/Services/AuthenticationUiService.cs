@@ -176,6 +176,7 @@ public sealed class AuthenticationUiService : IAuthenticationUiService
 
             if (validTo <= DateTimeOffset.Now)
             {
+                Token = null;
                 _logger.Logout();
                 Dispatcher.UIThread.Invoke(() => _appState.User = null);
 
