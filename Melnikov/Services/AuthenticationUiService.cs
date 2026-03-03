@@ -172,15 +172,25 @@ public sealed class AuthenticationUiService : IAuthenticationUiService
 
             var jwtSecurityToken = _jwtSecurityTokenHandler.ReadJwtToken(Token.Token);
             var id = Guid.Parse(jwtSecurityToken.Claims.GetNameIdentifierClaim().Value);
+            DateTimeOffset validTo = jwtSecurityToken.ValidTo;
+
+            if (validTo <= DateTimeOffset.Now)
+            {
+                _logger.Logout();
+                Dispatcher.UIThread.Invoke(() => _appState.User = null);
+
+                return;
+            }
+
             _logger.Login(id);
 
             Dispatcher.UIThread.Invoke(() =>
-                _appState.User = new()
-                {
-                    Id = id,
-                    Login = jwtSecurityToken.Claims.GetNameClaim().Value,
-                    Email = jwtSecurityToken.Claims.GetEmailClaim().Value,
-                }
+                _appState.User = new(
+                    id,
+                    jwtSecurityToken.Claims.GetNameClaim().Value,
+                    jwtSecurityToken.Claims.GetEmailClaim().Value,
+                    jwtSecurityToken.ValidTo
+                )
             );
         }
     }
