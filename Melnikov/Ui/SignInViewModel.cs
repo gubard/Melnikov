@@ -25,7 +25,8 @@ public sealed partial class SignInViewModel
         Func<CancellationToken, ConfiguredValueTaskAwaitable> successSignInFunc,
         IObjectStorage objectStorage,
         AppState appState,
-        IServiceController serviceController
+        IServiceController serviceController,
+        InannaCommands inannaCommands
     )
     {
         _authenticationUiService = authenticationUiService;
@@ -33,7 +34,10 @@ public sealed partial class SignInViewModel
         _objectStorage = objectStorage;
         _appState = appState;
         _serviceController = serviceController;
+        InannaCommands = inannaCommands;
     }
+
+    public InannaCommands InannaCommands { get; }
 
     public ConfiguredValueTaskAwaitable InitAsync(CancellationToken ct)
     {

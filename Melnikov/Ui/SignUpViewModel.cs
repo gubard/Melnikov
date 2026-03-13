@@ -12,26 +12,14 @@ namespace Melnikov.Ui;
 
 public sealed partial class SignUpViewModel : ViewModelBase, INonHeader, INonNavigate, INonStatusBar
 {
-    [ObservableProperty]
-    private string _login = string.Empty;
-
-    [ObservableProperty]
-    private string _email = string.Empty;
-
-    [ObservableProperty]
-    private string _password = string.Empty;
-
-    [ObservableProperty]
-    private string _repeatPassword = string.Empty;
-
-    private readonly IAuthenticationService _authenticationService;
-
     public SignUpViewModel(
         IAuthenticationService authenticationService,
-        IAuthenticationValidator authenticationValidator
+        IAuthenticationValidator authenticationValidator,
+        InannaCommands inannaCommands
     )
     {
         _authenticationService = authenticationService;
+        InannaCommands = inannaCommands;
 
         SetValidation(nameof(Login), () => authenticationValidator.Validate(Login, nameof(Login)));
         SetValidation(nameof(Email), () => authenticationValidator.Validate(Email, nameof(Email)));
@@ -60,6 +48,22 @@ public sealed partial class SignUpViewModel : ViewModelBase, INonHeader, INonNav
             }
         );
     }
+
+    public InannaCommands InannaCommands { get; }
+
+    [ObservableProperty]
+    private string _login = string.Empty;
+
+    [ObservableProperty]
+    private string _email = string.Empty;
+
+    [ObservableProperty]
+    private string _password = string.Empty;
+
+    [ObservableProperty]
+    private string _repeatPassword = string.Empty;
+
+    private readonly IAuthenticationService _authenticationService;
 
     [RelayCommand]
     private async Task SignUpAsync(CancellationToken ct)

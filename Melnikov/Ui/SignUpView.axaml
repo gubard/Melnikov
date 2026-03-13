@@ -4,7 +4,6 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:ui="clr-namespace:Melnikov.Ui"
              xmlns:c="clr-namespace:Inanna.Controls;assembly=Inanna"
-             xmlns:helpers="clr-namespace:Inanna.Helpers;assembly=Inanna"
              xmlns:s="clr-namespace:Inanna.Services;assembly=Inanna"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Melnikov.Ui.SignUpView"
@@ -23,14 +22,14 @@
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Email}" />
                 <TextBox x:Name="EmailTextBox" Text="{Binding Email}" KeyDown="EmailTextBoxOnKeyDown" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.Password}" />
-                <TextBox x:Name="PasswordTextBox" Classes="password" 
+                <TextBox x:Name="PasswordTextBox" Classes="password"
                          Text="{Binding Password}"
                          KeyDown="PasswordTextBoxOnKeyDown" />
                 <TextBlock Classes="field" Text="{DynamicResource Lang.RepeatPassword}" />
                 <TextBox x:Name="RepeatPasswordTextBox" Classes="password" Text="{Binding RepeatPassword}" />
 
                 <StackPanel Classes="horizontal align-right">
-                    <Button Command="{x:Static helpers:InannaCommands.NavigateToCommand}"
+                    <Button Command="{Binding InannaCommands.NavigateToCommand}"
                             CommandParameter="{x:Type ui:SignInViewModel}"
                             Content="{DynamicResource Lang.SignIn}" />
                     <Button x:Name="SignUpButton" Command="{Binding SignUpCommand}"
