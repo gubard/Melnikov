@@ -7,6 +7,7 @@ using Inanna.Models;
 using Inanna.Services;
 using Manis.Contract.Models;
 using Manis.Contract.Services;
+using IServiceProvider = Gaia.Services.IServiceProvider;
 
 namespace Melnikov.Ui;
 
@@ -15,11 +16,17 @@ public sealed partial class SignUpViewModel : ViewModelBase, INonHeader, INonNav
     public SignUpViewModel(
         IAuthenticationService authenticationService,
         IAuthenticationValidator authenticationValidator,
-        InannaCommands inannaCommands
+        InannaCommands inannaCommands,
+        ISafeExecuteWrapper safeExecuteWrapper,
+        INavigator navigator,
+        IServiceProvider serviceProvider
     )
+        : base(safeExecuteWrapper)
     {
         _authenticationService = authenticationService;
         InannaCommands = inannaCommands;
+        _navigator = navigator;
+        _serviceProvider = serviceProvider;
 
         SetValidation(nameof(Login), () => authenticationValidator.Validate(Login, nameof(Login)));
         SetValidation(nameof(Email), () => authenticationValidator.Validate(Email, nameof(Email)));
@@ -64,6 +71,8 @@ public sealed partial class SignUpViewModel : ViewModelBase, INonHeader, INonNav
     private string _repeatPassword = string.Empty;
 
     private readonly IAuthenticationService _authenticationService;
+    private readonly INavigator _navigator;
+    private readonly IServiceProvider _serviceProvider;
 
     [RelayCommand]
     private async Task SignUpAsync(CancellationToken ct)
@@ -84,7 +93,7 @@ public sealed partial class SignUpViewModel : ViewModelBase, INonHeader, INonNav
             return response;
         }
 
-        await UiHelper.NavigateToAsync<SignInViewModel>(ct);
+        await _navigator.NavigateToAsync<SignInViewModel>(_serviceProvider, ct);
 
         return response;
     }

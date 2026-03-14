@@ -26,8 +26,10 @@ public sealed partial class SignInViewModel
         IObjectStorage objectStorage,
         AppState appState,
         IServiceController serviceController,
-        InannaCommands inannaCommands
+        InannaCommands inannaCommands,
+        ISafeExecuteWrapper safeExecuteWrapper
     )
+        : base(safeExecuteWrapper)
     {
         _authenticationUiService = authenticationUiService;
         _successSignInFunc = successSignInFunc;
