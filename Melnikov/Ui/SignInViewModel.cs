@@ -17,8 +17,7 @@ public sealed partial class SignInViewModel
         INonHeader,
         INonNavigate,
         IInit,
-        INonStatusBar,
-        ILoad
+        INonStatusBar
 {
     public SignInViewModel(
         IAuthenticationUiService authenticationUiService,
@@ -59,32 +58,16 @@ public sealed partial class SignInViewModel
                 {
                     await _authenticationUiService.LoginAsync(settings.Token, ct);
                 }
-            },
-            ct
-        );
-    }
 
-    public ConfiguredValueTaskAwaitable LoadAsync(CancellationToken ct)
-    {
-        return WrapCommandAsync(
-            async () =>
-            {
-                try
+                if (_appState.User is null)
                 {
-                    if (_appState.User is null)
-                    {
-                        return new DefaultValidationErrors();
-                    }
-
-                    var errors = await _serviceController.RefreshServicesAsync(ct);
-                    await _successSignInFunc.Invoke(ct);
-
-                    return errors;
+                    return new DefaultValidationErrors();
                 }
-                finally
-                {
-                    Dispatcher.UIThread.Post(() => IsBusy = false);
-                }
+
+                var errors = await _serviceController.RefreshServicesAsync(ct);
+                await _successSignInFunc.Invoke(ct);
+
+                return errors;
             },
             ct
         );
@@ -139,7 +122,7 @@ public sealed partial class SignInViewModel
         }
         finally
         {
-            IsBusy = false;
+            Dispatcher.UIThread.Post(() => IsBusy = false);
         }
     }
 
