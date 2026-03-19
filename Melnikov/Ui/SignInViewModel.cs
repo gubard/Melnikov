@@ -46,28 +46,36 @@ public sealed partial class SignInViewModel
             async () =>
             {
                 Dispatcher.UIThread.Post(() => IsBusy = true);
-                var settings = await _objectStorage.LoadAsync<AuthenticationSettings>(ct);
 
-                Dispatcher.UIThread.Invoke(() =>
+                try
                 {
-                    LoginOrEmail = settings.LoginOrEmail;
-                    IsRememberMe = settings.IsRememberMe;
-                });
+                    var settings = await _objectStorage.LoadAsync<AuthenticationSettings>(ct);
 
-                if (!settings.Token.IsNullOrWhiteSpace())
-                {
-                    await _authenticationUiService.LoginAsync(settings.Token, ct);
+                    Dispatcher.UIThread.Invoke(() =>
+                    {
+                        LoginOrEmail = settings.LoginOrEmail;
+                        IsRememberMe = settings.IsRememberMe;
+                    });
+
+                    if (!settings.Token.IsNullOrWhiteSpace())
+                    {
+                        await _authenticationUiService.LoginAsync(settings.Token, ct);
+                    }
+
+                    if (_appState.User is null)
+                    {
+                        return new DefaultValidationErrors();
+                    }
+
+                    var errors = await _serviceController.RefreshServicesAsync(ct);
+                    await _successSignInFunc.Invoke(ct);
+
+                    return errors;
                 }
-
-                if (_appState.User is null)
+                finally
                 {
-                    return new DefaultValidationErrors();
+                    Dispatcher.UIThread.Post(() => IsBusy = false);
                 }
-
-                var errors = await _serviceController.RefreshServicesAsync(ct);
-                await _successSignInFunc.Invoke(ct);
-
-                return errors;
             },
             ct
         );
